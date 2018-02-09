@@ -1,30 +1,37 @@
 import socket
-import threading
+from client import *
+from controller import *
 
-serveraddr = '127.0.0.1'
-port = 20000
+class server(object):
 
-def ProcessRequest(clientsocket, clientaddr):
-    print('Accepted connection from {0}:{1}'.format(clientsocket, clientaddr))
-    clientsocket.send(b'Welcome!')
-    while True:
-        data = clientsocket.recv(1024)
-        if not data or data.decode('utf-8') == 'exit':
-            break
-        print('{0}:{1} says{2}:'.format(clientsocket, clientaddr, data))
-    print('{0}:{1} exit.')
+    def __init__(self, addr, port):
+        self._addr = addr
+        self._port = port
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._socket.bind((self._addr, self._port))
+        self._clientsocket = []
 
-def serverstart():
-    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    def __str__(self):
+        return '{0}:{1}'.format(self._addr, self._port)
 
-    serversocket.bind((serveraddr, port))
+    def serverstart(self):
+        self._socket.listen(0)
+        print('Server started. Wariting for connecting...')
+        while True:
+            clientsocket, clientaddr = self._socket.accept()
+            c = client(clientsocket, clientaddr, self)
+            c.start()
+            self._clientsocket.append(c)
 
-    serversocket.listen(0)
+    def processrequest(self, requestcode, actioncode, data, client):
+        print(controllerdict)
+        retrc, retdata = controllerdict[requestcode].processrequest(actioncode, data)
+        client.processret(retrc, retdata)
 
-    print('Wariting for connecting...')
+    def remove(self, client):
+        self._clientsocket.remove(client)
 
-    while True:
-        clientsocket, clientaddr = serversocket.accept()
-        processthread = threading.Thread(target=ProcessRequest, args=(clientsocket, clientaddr))
-        processthread.start()
-
+    def close(self):
+        self._socket.close()
+        for clientsocket in self._clientsocket:
+            clientsocket.close()
