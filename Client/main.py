@@ -12,5 +12,7 @@ if __name__ == '__main__':
     client.registure('wjc', 'wjc')
     client.updatepwd('wjc', 'Wang0010')
     client.registure('1016864609', '101686@')
-    client.join()
+    client.login()
     client.logout()
+
+    client.join()

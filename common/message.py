@@ -47,10 +47,12 @@ class CMessage(object):
                 return
             try:
                 l, = struct.unpack('i', buff[0:leni])
+                self._index = leni + l
                 reqcode, = struct.unpack('i', buff[leni:leni*2])
                 upkformat = '{}s'.format(l - leni)
-                data, = struct.unpack(upkformat, buff[leni*2:])
+                data, = struct.unpack(upkformat, buff[leni*2:self._index])
+                buff = buff[self._index:]
             except Exception:
-                print('Unpack buffer error.')
+                # print('Unpack buffer error.')
                 break
             client.processrequestcode(reqcode, data)

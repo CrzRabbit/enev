@@ -1,6 +1,7 @@
 import socket
 import threading
-
+from enev.common.common import *
+from enev.common.message import *
 
 recvdatalen = 1024
 
@@ -45,16 +46,15 @@ class Client(object):
         self.senddata(buff)
 
     def login(self):
-        buff = self._message.pack(requestcode.logio, actioncode.login, ' ')
+        buff = self._message.pack(requestcode.logio, actioncode.login, '')
         self.senddata(buff)
 
     def logout(self):
-        buff = self._message.pack(requestcode.logio, actioncode.logout, ' ')
+        buff = self._message.pack(requestcode.logio, actioncode.logout, '')
         self.senddata(buff)
 
     def senddata(self, buff):
         try:
             self._socket.send(buff)
-            print(buff)
         except socket.error:
             print('Send data to server failed')
