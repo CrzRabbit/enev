@@ -1,29 +1,27 @@
-from common import *
 from DAO import *
-import re
 
 controllerdict = dict()
 
 class basecontroller(object):
     def __init__(self):
-        self._requestcode = requestcode.default
+        # self._requestcode = requestcode.default
         self._DAO = DAO()
 
-    def processrequset(self, actioncode, data):
+    def processrequest(self, actcode, data):
         pass
 
 class accountcontroller(basecontroller):
-    def __init__(self, requestcode=requestcode.account):
-        self._requestcode = requestcode
+    def __init__(self, reqcode = requestcode.account):
+        self._requestcode = reqcode
         super(accountcontroller, self).__init__()
-        # controllerdict[self._requestcode] = self
+        controllerdict[self._requestcode] = self
         # controllerdict.__setitem__(self._requestcode, self)
 
-    def processrequset(self, actioncode, data):
+    def processrequest(self, actcode, data):
         ret = None
-        if actioncode == actioncode.registure:
+        if actcode == actioncode.registure:
             ret = self.registure(data)
-        elif actioncode == actioncode.updatepwd:
+        elif actcode == actioncode.updatepwd:
             ret = self.updatepwd(data)
         return ret
 
@@ -55,22 +53,22 @@ class accountcontroller(basecontroller):
 # accountcontroller().deleteuser(data3)
 
 class logiocontroller(basecontroller):
-    def __init__(self, requestcode=requestcode.logio):
-        self._requestcode = requestcode
+    def __init__(self, reqcode = requestcode.logio):
+        self._requestcode = reqcode
         super(logiocontroller, self).__init__()
-        # controllerdict[self._requestcode] = self
-        controllerdict.__setitem__(self._requestcode, self)
+        controllerdict[self._requestcode] = self
+        # controllerdict.__setitem__(self._requestcode, self)
 
-    def processrequset(self, actioncode, data):
+    def processrequest(self, actcode, data):
         ret = None
-        if actioncode == actioncode.login:
+        if actcode == actioncode.login:
             ret = self.login()
-        elif actioncode == actioncode.logout:
+        elif actcode == actioncode.logout:
             ret = self.logout()
         return ret
 
     def login(self):
-        pass
+        return self._requestcode, 'OK'
 
     def logout(self):
-        pass
+        return self._requestcode, 'OK'

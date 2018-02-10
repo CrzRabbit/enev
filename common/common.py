@@ -11,4 +11,3 @@ class actioncode(Enum):
     updatepwd = 2
     login = 3
     logout = 4
-

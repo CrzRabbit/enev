@@ -1,12 +1,12 @@
 import mysql.connector
-from common import *
+from enev.common.common import *
 
 connconfig = {
     'host': 'localhost',
     'port': '3306',
-    'user': 'wangjiangchuan',
-    'password': 'wang0010',
-    'database': 'test001',
+    'user': 'root',
+    'password': 'root',
+    'database': 'gameserverdb',
 }
 
 class DAO(object):
@@ -30,8 +30,11 @@ class DAO(object):
         params = []
         for param in args:
             params.append(param)
-        ret = self._cursor.execute(sql, params)
-        self._conn.commit()
+        try:
+            ret = self._cursor.execute(sql, params)
+            self._conn.commit()
+        except Exception:
+            return requestcode.account, 'ERROR'
         return requestcode.account, 'OK'
 
     def update(self, sql, *args):

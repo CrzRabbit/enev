@@ -16,20 +16,22 @@ class server(object):
 
     def serverstart(self):
         self._socket.listen(0)
-        print('Server started. Wariting for connecting...')
+        print('Server started. Waiting for connecting...')
         while True:
             clientsocket, clientaddr = self._socket.accept()
-            c = client(clientsocket, clientaddr, self)
-            c.start()
-            self._clientsocket.append(c)
+            print('{} connected.'.format(clientaddr))
+            cnt = client(clientsocket, clientaddr, self)
+            self._clientsocket.append(cnt)
 
-    def processrequest(self, requestcode, actioncode, data, client):
-        print(controllerdict)
-        retrc, retdata = controllerdict[requestcode].processrequest(actioncode, data)
+    def processrequest(self, reqcode, actcode, data, client):
+        retrc, retdata = controllerdict[reqcode].processrequest(actcode, data)
         client.processret(retrc, retdata)
 
     def remove(self, client):
-        self._clientsocket.remove(client)
+        try:
+            self._clientsocket.remove(client)
+        except Exception:
+            print('Close client error.')
 
     def close(self):
         self._socket.close()

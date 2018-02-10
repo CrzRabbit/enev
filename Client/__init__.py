@@ -1,1 +1,1 @@
-__all__ = ['client.py', 'message.py']
+__all__ = ['client.py']

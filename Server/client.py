@@ -1,4 +1,3 @@
-from message import *
 import threading
 
 recvdatalen = 1024
@@ -9,15 +8,20 @@ class client(object):
         self._addr = addr
         self._server = server
         self._message = SMessage()
-        self.start()
+        self._exdatathread = threading.Thread(target=self.start)
+        self._exdatathread.start()
 
     def start(self):
         bytes = self._message.pack(0, 'Welcome~')
         self._socket.send(bytes)
         while True:
-            buff = self._socket.recv(recvdatalen)
-            t = threading.Thread(target=self._message.unpack, args=(buff, self._server, self))
-            t.start()
+            try:
+                buff = self._socket.recv(recvdatalen)
+            except Exception:
+                self.close()
+                break
+            thread = threading.Thread(target=self._message.unpack, args=(buff, self._server, self))
+            thread.start()
             #requestcode, actioncode, data = self._message.unpack(buff)
             #self._server.processrequest(requestcode, actioncode, data)
 
