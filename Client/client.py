@@ -1,7 +1,7 @@
 import socket
 import threading
-from enev.common.common import *
-from enev.common.message import *
+from common.common import *
+from common.message import *
 
 recvdatalen = 1024
 

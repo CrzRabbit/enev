@@ -1,5 +1,5 @@
 import threading
-from enev.common.message import *
+from common.message import *
 
 recvdatalen = 1024
 
