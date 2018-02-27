@@ -1,4 +1,4 @@
-from client import *
+from Client.client import *
 
 addr = '127.0.0.1'
 port = 20000
