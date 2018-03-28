@@ -1,5 +1,5 @@
 import mysql.connector
-from enev.common.common import *
+from common.common import *
 
 connconfig = {
     'host': 'localhost',
