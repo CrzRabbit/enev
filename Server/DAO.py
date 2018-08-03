@@ -27,6 +27,7 @@ class DAO(object):
         # paramtmp.append(args[0])
         # if(None != self._cursor.execute(sqltmp, paramtmp, multi=True)):
         #      return None
+        #print sql
         params = []
         for param in args:
             params.append(param)
@@ -52,6 +53,13 @@ class DAO(object):
         self._conn.commit()
         return requestcode.account, 'OK'
 
-    def select(self, sql):
-        for result in self._cursor.execute(sql, multi=True):
-            print(result.fetchall())
+    def select(self, sql, *args):
+        params = []
+        for param in args:
+            params.append(param)
+        self._cursor.execute(sql, params, multi=True)
+        if self._cursor.fetchone():
+            return requestcode.logio, 'OK'
+        else:
+            return requestcode.logio, 'ERROR'
+

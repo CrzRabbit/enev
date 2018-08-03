@@ -1,4 +1,5 @@
-from DAO import *
+from Server.DAO import *
+from common.common import *
 
 controllerdict = dict()
 
@@ -62,13 +63,15 @@ class logiocontroller(basecontroller):
     def processrequest(self, actcode, data):
         ret = None
         if actcode == actioncode.login:
-            ret = self.login()
+            ret = self.login(data)
         elif actcode == actioncode.logout:
-            ret = self.logout()
+            ret = self.logout(data)
         return ret
 
-    def login(self):
-        return self._requestcode, 'OK'
+    def login(self, data):
+        name, pwd = data.split()
+        sql = 'SELECT * FROM user WHERE user_name = %s AND user_pwd = %s'
+        return self._DAO.select(sql, name, pwd)
 
-    def logout(self):
+    def logout(self, data):
         return self._requestcode, 'OK'

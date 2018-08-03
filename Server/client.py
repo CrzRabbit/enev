@@ -1,5 +1,6 @@
 import threading
 from common.message import *
+from common.common import *
 
 recvdatalen = 1024
 
@@ -13,8 +14,7 @@ class client(object):
         self._exdatathread.start()
 
     def start(self):
-        bytes = self._message.pack(0, 'Welcome~')
-        self._socket.send(bytes)
+        self.processret(requestcode.default, 'Welcome~')
         while True:
             try:
                 buff = self._socket.recv(recvdatalen)
@@ -28,7 +28,8 @@ class client(object):
 
     def processret(self, requestcode, data):
         buff = self._message.pack(requestcode, data)
-        self._socket.send(buff)
+        if buff:
+            self._socket.send(buff)
 
     def close(self):
         self._socket.close()
