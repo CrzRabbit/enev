@@ -14,6 +14,6 @@ class User(Model):
     # name = StringField(ddl='varchar(50)')
     # image = StringField(ddl='varchar(500)')
     # created_at = FloatField(default=time.time)
-    index = IntegerField(primary_key=True)
+    user_index = IntegerField(primary_key=True)
     user_name = StringField(ddl='varchar(20)')
     user_pwd = StringField(ddl='varchar(20)')

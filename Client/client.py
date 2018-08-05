@@ -35,7 +35,7 @@ class Client(object):
                 break
 
     def processrequestcode(self, reqcode, data):
-        print(reqcode, data)
+        print('Received: ({0}, {1})'.format(requestcode(reqcode).name, data))
 
     def registure(self, name, pwd):
         buff = self._message.pack(requestcode.account, actioncode.registure, name + ' ' + pwd)

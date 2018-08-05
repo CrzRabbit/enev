@@ -1,6 +1,7 @@
 import threading
 from common.message import *
 from common.common import *
+import asyncio
 
 recvdatalen = 1024
 
@@ -23,8 +24,6 @@ class client(object):
                 break
             thread = threading.Thread(target=self._message.unpack, args=(buff, self._server, self))
             thread.start()
-            #requestcode, actioncode, data = self._message.unpack(buff)
-            #self._server.processrequest(requestcode, actioncode, data)
 
     def processret(self, requestcode, data):
         buff = self._message.pack(requestcode, data)
