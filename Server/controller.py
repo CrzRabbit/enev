@@ -26,7 +26,7 @@ class accountcontroller(basecontroller):
     def registure(self, data):
         name, pwd = data.split()
         user = User(user_name=name, user_pwd=pwd)
-        user.save()
+        yield from user.save()
         return requestcode.account, 'OK'
 
 # class accountcontroller(basecontroller):
