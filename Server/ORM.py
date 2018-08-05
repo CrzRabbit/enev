@@ -5,12 +5,13 @@ import logging; logging.basicConfig(level=logging.INFO)
 def log(sql, args=()):
     logging.info('SQL: {0}{1}'.format(sql, ' % {0}'.format(tuple(args)) if args else ''))
 
-#@asyncio.coroutine
+@asyncio.coroutine
 def create_pool(loop, **kw):
     logging.info('create database connection pool...')
+    print(kw)
     global __pool
-    __pool = aiomysql.create_pool(
-        host=kw.get('host', 'localhost'),
+    __pool = yield from aiomysql.create_pool(
+        host=kw.get('host', '127.0.0.1'),
         port=kw.get('port', 3306),
         user=kw['user'],
         password=kw['password'],
