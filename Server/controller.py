@@ -2,6 +2,7 @@ from common.common import *
 from Server.tables import *
 
 controllerdict = dict()
+usercount = 0
 
 class basecontroller(object):
     def __init__(self):
@@ -22,7 +23,9 @@ class accountcontroller(basecontroller):
         return await self._actiondict[actcode](data)
 
     async def registure(self, data):
+        global usercount
         name, pwd = data.split()
-        user = User(user_index=1, user_name=name, user_pwd=pwd)
+        user = User(user_index=usercount, user_name=name, user_pwd=pwd)
         retdata = await user.save()
+        usercount += 1
         return self._requestcode, retdata

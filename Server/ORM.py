@@ -173,8 +173,8 @@ class Model(dict, metaclass=ModelMetaClass):
             logging.warning('Insert value failed, affected rows: {0}'.format(rows))
         elif rows == 1:
             logging.warning('Insert success~!')
-            return 'OK'
-        return 'ERROR'
+            return b'OK'
+        return b'ERROR'
 
     async def update(self):
         args = list(map(self.getValue, self.__fields__))

@@ -14,7 +14,7 @@ class server(object):
         return await self._message.unpack(data, self)
 
     async def processretdata(self, reqcode, data):
-        return await self._message.pack(reqcode, data)
+        return self._message.pack(reqcode, data)
 
     async def processrequest(self, reqcode, actcode, data):
         retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)

@@ -11,9 +11,11 @@ async def async_server(reader, writer):
         data = await reader.readline()
         client = writer.get_extra_info('peername')
         if data != b'':
+            print('Received from {0}: {1}'.format(client, data))
             retrc, retdata = await server_pro.processdata(data)
+            # writer.writelines(' '.join((''.format(retrc), retdata)))
             response_data = await server_pro.processretdata(retrc, retdata)
-            writer.writelines(response_data)
+            writer.write(response_data)
         await writer.drain()
 
 async def init(loop):

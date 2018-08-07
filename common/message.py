@@ -4,11 +4,13 @@ from common.common import *
 leni = struct.calcsize('i')
 
 class SMessage(object):
-    async def pack(self, requestcode, data):
+    def pack(self, requestcode, data):
         pformat = None
         try:
             pformat = 'i i {}s'.format(len(data))
-            return struct.pack(pformat, (leni + len(data)), requestcode.value, bytes(data, encoding='utf-8'))
+            # buff = struct.pack(pformat, (leni + len(data)), requestcode.value, bytes(data, encoding='utf-8'))
+            buff = struct.pack(pformat, (leni + len(data)), requestcode.value, data)
+            return buff
         except struct.error:
             print('Pack Message Error:\n    format: {0}\n    len: {1}\n    '
                   'requestcode: {2}\n    data: {3}'.format(pformat, leni + len(data), requestcode, data))
