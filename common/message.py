@@ -1,12 +1,10 @@
 import struct
-import sys
 from common.common import *
-import asyncio
 
 leni = struct.calcsize('i')
 
 class SMessage(object):
-    def pack(self, requestcode, data):
+    async def pack(self, requestcode, data):
         pformat = None
         try:
             pformat = 'i i {}s'.format(len(data))
@@ -17,7 +15,7 @@ class SMessage(object):
             return None
 
 #(len:requestcode:actioncode:data)
-    def unpack(self, buff, server, client):
+    async def unpack(self, buff, server):
         self._index = 0
         self._bufflen = len(buff)
         if self._bufflen < 4:
@@ -35,7 +33,7 @@ class SMessage(object):
             except Exception:
                 #print('Unpack buffer error.')
                 break
-            server.processrequest(reqcode, actcode, data, client)
+            return await server.processrequest(reqcode, actcode, data)
 
 class CMessage(object):
     def pack(self, requestcode, actioncode, data):

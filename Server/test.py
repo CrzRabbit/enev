@@ -3,7 +3,7 @@ import asyncio
 
 
 def init(loop, **kwargs):
-    yield from create_pool(loop, **kwargs)
+    await create_pool(loop, **kwargs)
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

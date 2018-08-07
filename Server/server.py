@@ -1,43 +1,24 @@
 import socket
-from Server.client import *
 from Server.controller import *
 from common.common import *
+from common.message import *
 import asyncio
-from Server.ORM import *
 
 class server(object):
 
     def __init__(self, addr, port):
-        self._addr = addr
-        self._port = port
-        #self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #self._socket.bind((self._addr, self._port))
-        self._clientsocket = []
+        self._message = SMessage()
+        self._controllerdict = controllerdict
 
-    def __str__(self):
-        return '{0}:{1}'.format(self._addr, self._port)
+    async def processdata(self, data):
+        return await self._message.unpack(data, self)
 
-    @asyncio.coroutine
-    def serverstart(self, loop):
+    async def processretdata(self, reqcode, data):
+        return await self._message.pack(reqcode, data)
 
-        accountcontroller(loop)
-
-        yield from create_pool(loop, user='root', password='wang0010', database='gameserverdb')
-
-        self._socket.listen(0)
-        print('Server started. Waiting for connecting...')
-        while True:
-            clientsocket, clientaddr = self._socket.accept()
-            print('{} connected.'.format(clientaddr))
-            cnt = client(clientsocket, clientaddr, self)
-            self._clientsocket.append(cnt)
-
-
-    async def processrequest(self, reqcode, actcode, data, client):
-        #retrc, retdata = controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
-        #client.processret(retrc, retdata)
+    async def processrequest(self, reqcode, actcode, data):
         retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
-        client.processret(retrc, retdata)
+        return retrc, retdata
 
     def remove(self, client):
         try:

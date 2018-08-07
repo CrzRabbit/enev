@@ -9,7 +9,7 @@ port = 20000
 loop = None
 
 #def init(loop):
-#    yield from create_pool(loop=loop, host='127.0.0.1', user='root', password='root', database='users')
+#    await create_pool(loop=loop, host='127.0.0.1', user='root', password='root', database='users')
 
 if __name__ == '__main__':
 
