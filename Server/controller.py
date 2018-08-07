@@ -9,6 +9,7 @@ class basecontroller(object):
     def __init__(self, loop):
         # self._requestcode = requestcode.default
         # self._DAO = DAO(loop, user='root', password='wang0010', database='gameserverdb')
+        self._loop = loop
         pass
 
     def processrequest(self, actcode, data):
@@ -22,15 +23,16 @@ class accountcontroller(basecontroller):
         super(accountcontroller, self).__init__(loop)
         controllerdict[self._requestcode] = self
 
-    def processrequest(self, actcode, data):
-        return self._actiondict[actcode](data)
+    async def processrequest(self, actcode, data):
+        # return self._actiondict[actcode](data)
+        return await self._actiondict[actcode](data)
 
-    @asyncio.coroutine
-    def registure(self, data):
+    #@asyncio.coroutine
+    async def registure(self, data):
         name, pwd = data.split()
-        user = User(user_name=name, user_pwd=pwd)
-        yield from user.save()
-        #return requestcode.account, 'OK'
+        user = User(user_index=1, user_name=name, user_pwd=pwd)
+        await user.save()
+        return self._requestcode, 'OK'
 
 # class accountcontroller(basecontroller):
 #     def __init__(self, reqcode = requestcode.account):

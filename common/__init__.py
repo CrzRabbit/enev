@@ -1,1 +1,1 @@
-__all__ = ['common.py', 'message.py']
+__all__ = ['common', 'message']

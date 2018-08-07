@@ -10,8 +10,8 @@ class server(object):
     def __init__(self, addr, port):
         self._addr = addr
         self._port = port
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._socket.bind((self._addr, self._port))
+        #self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #self._socket.bind((self._addr, self._port))
         self._clientsocket = []
 
     def __str__(self):
@@ -32,10 +32,11 @@ class server(object):
             cnt = client(clientsocket, clientaddr, self)
             self._clientsocket.append(cnt)
 
-    def processrequest(self, reqcode, actcode, data, client):
+
+    async def processrequest(self, reqcode, actcode, data, client):
         #retrc, retdata = controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
         #client.processret(retrc, retdata)
-        retrc, retdata = controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
+        retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
         client.processret(retrc, retdata)
 
     def remove(self, client):

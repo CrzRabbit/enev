@@ -46,7 +46,7 @@ def execute(sql, args, autocommit=True):
             yield from conn.begin()
         try:
             cur = yield from conn.cursor()
-            yield from cur.execute(sql.replace('?', '%s'), args or ())
+            cur.execute(sql.replace('?', '%s'), args or ())
             affected = cur.rowcount
             if not autocommit:
                 yield from conn.commit()
@@ -176,7 +176,6 @@ class Model(dict, metaclass=ModelMetaClass):
     def save(self):
         args = list(map(self.getValueOrDefault, self.__fields__))
         args.append('{0}'.format(self.getValueOrDefault(self.__primary_key__)))
-        print(args)
         rows = yield from execute(self.__insert__, args)
         if rows != 1:
             logging.warning('Insert value failed, affected rows: {0}'.format(rows))
