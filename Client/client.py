@@ -4,6 +4,7 @@ from common.common import *
 from common.message import *
 
 recvdatalen = 1024
+SEPARATOR = '#'
 
 class Client(object):
     def __init__(self, addr, port):
@@ -28,8 +29,8 @@ class Client(object):
         while True:
             try:
                 buff = self._socket.recv(recvdatalen)
-                if buff != b'':
-                    print('Received {}'.format(buff))
+                # if buff != b'':
+                #     print('Received {}'.format(buff))
                 thread = threading.Thread(target=self._message.unpack, args=(buff, self))
                 thread.start()
             except Exception:
@@ -40,22 +41,22 @@ class Client(object):
         print('Received: ({0}, {1})'.format(requestcode(reqcode).name, data))
 
     def registure(self, name, pwd):
-        buff = self._message.pack(requestcode.account, actioncode.registure, name + ' ' + pwd)
+        buff = self._message.pack(requestcode.account, actioncode.registure, name + ' ' + pwd + SEPARATOR)
         if buff:
             self.senddata(buff)
 
     def updatepwd(self, name, pwd):
-        buff = self._message.pack(requestcode.account, actioncode.updatepwd, name + ' ' + pwd)
+        buff = self._message.pack(requestcode.account, actioncode.updatepwd, name + ' ' + pwd + SEPARATOR)
         if buff:
             self.senddata(buff)
 
     def login(self, name, pwd):
-        buff = self._message.pack(requestcode.logio, actioncode.login, name + ' ' + pwd)
+        buff = self._message.pack(requestcode.logio, actioncode.login, name + ' ' + pwd + SEPARATOR)
         if buff:
             self.senddata(buff)
 
     def logout(self):
-        buff = self._message.pack(requestcode.logio, actioncode.logout, '')
+        buff = self._message.pack(requestcode.logio, actioncode.logout, '' + SEPARATOR)
         if buff:
             self.senddata(buff)
 

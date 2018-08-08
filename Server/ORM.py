@@ -25,7 +25,10 @@ async def select(sql, args, size=None):
     global __pool
     with (await __pool) as conn:
         cur = await conn.cursor(aiomysql.DictCursor)
-        await cur.execute(sql.replace('?', '%s'), args or ())
+        try:
+            await cur.execute(sql.replace('?', '%s'), args or ())
+        except Exception as e:
+            logging.error('{}\n'.format(e))
         if size:
             rs = cur.fetchmany(size)
         else:
@@ -36,6 +39,7 @@ async def select(sql, args, size=None):
 
 async def execute(sql, args, autocommit=True):
     log(sql.replace('?', '%s'), args)
+    affected = None
     with (await __pool) as conn:
         if not autocommit:
             await conn.begin()
@@ -48,7 +52,7 @@ async def execute(sql, args, autocommit=True):
         except BaseException as e:
             if not autocommit:
                 await conn.rollback()
-            raise
+            logging.error('{}\n'.format(e))
         return affected
 
 class ModelMetaClass(type):
@@ -166,6 +170,7 @@ class Model(dict, metaclass=ModelMetaClass):
         logging.warning('Clear completed, {0} rows affected'.format(rows))
 
     async def save(self):
+        rows = None
         args = list(map(self.getValueOrDefault, self.__fields__))
         args.append('{0}'.format(self.getValueOrDefault(self.__primary_key__)))
         rows = await execute(self.__insert__, args)

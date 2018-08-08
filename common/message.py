@@ -1,6 +1,8 @@
 import struct
 from common.common import *
 
+SEPARATOR_LEN = 1
+
 leni = struct.calcsize('i')
 class Message(object):
     def __init__(self, requestcode=requestcode.default, actioncode=actioncode.default, data=''):
@@ -37,8 +39,9 @@ class SMessage(object):
                 self._index = leni + l
                 reqcode, = struct.unpack('i', buff[leni:leni*2])
                 actcode, = struct.unpack('i', buff[leni*2:leni*3])
-                upkformat = '{}s'.format(l - leni*2)
-                data, = struct.unpack(upkformat, buff[leni*3:self._index])
+                #we should abandon separator: '#'
+                upkformat = '{}s'.format(l - SEPARATOR_LEN - leni*2)
+                data, = struct.unpack(upkformat, buff[leni*3:self._index - SEPARATOR_LEN])
                 print('({0}, {1}, {2})'.format(requestcode(reqcode).name, actioncode(actcode).name, data))
                 ret.append(Message(requestcode(reqcode), actioncode(actcode), data))
                 buff = buff[self._index:]
