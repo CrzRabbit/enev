@@ -1,7 +1,6 @@
 import socket
-from Server.client import *
-from Server.controller import *
-from common.common import *
+from client import *
+from controller import *
 
 class server(object):
 
@@ -25,7 +24,7 @@ class server(object):
             self._clientsocket.append(cnt)
 
     def processrequest(self, reqcode, actcode, data, client):
-        retrc, retdata = controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
+        retrc, retdata = controllerdict[reqcode].processrequest(actcode, data)
         client.processret(retrc, retdata)
 
     def remove(self, client):

@@ -1,21 +1,14 @@
 import struct
 import sys
-import asyncio
-from common.common import *
 
 leni = struct.calcsize('i')
 
 class SMessage(object):
 
     def pack(self, requestcode, data):
-        pformat = None
-        try:
-            pformat = 'i i {}s'.format(len(data))
-            return struct.pack(pformat, (leni + len(data)), requestcode.value, bytes(data, encoding='utf-8'))
-        except struct.error:
-            print('Pack Message Error:\n    format: {0}\n    len: {1}\n    '
-                  'requestcode: {2}\n    data: {3}'.format(pformat, leni + len(data), requestcode, data))
-            return None
+        pformat = 'i i {}s'.format(len(data))
+        buff = struct.pack(pformat, (leni + len(data)), requestcode, data)
+        return buff
 
 #(len:requestcode:actioncode:data)
     def unpack(self, buff, server, client):
@@ -31,24 +24,19 @@ class SMessage(object):
                 actcode, = struct.unpack('i', buff[leni*2:leni*3])
                 upkformat = '{}s'.format(l - leni*2)
                 data, = struct.unpack(upkformat, buff[leni*3:self._index])
-                print('({0}, {1}, {2})'.format(requestcode(reqcode).name, actioncode(actcode).name, data))
+                print(reqcode, actcode, data)
                 buff = buff[self._index:]
             except Exception:
-                #print('Unpack buffer error.')
+                print('Unpack buffer error.')
                 break
             server.processrequest(reqcode, actcode, data, client)
 
 class CMessage(object):
 
     def pack(self, requestcode, actioncode, data):
-        pformat = None
-        try:
-            pformat = 'i i i {}s'.format(len(data))
-            return struct.pack(pformat, leni + leni + len(data), requestcode.value, actioncode.value, bytes(data, encoding='utf-8'))
-        except struct.error as e:
-            print('Pack Message Error:\n    format: {0}\n    len: {1}\n    requescode: {2}\n    '
-                  'actioncode: {3}\n    data: {4}'.format(pformat, leni + leni + len(data), requestcode, actioncode, data))
-            return None
+        pformat = 'i i i {}s'.format(len(data))
+        buff = struct.pack(pformat, leni + leni + len(data), requestcode, actioncode, data)
+        return buff
 
 #(len:requestcode:data)
     def unpack(self, buff, client):
@@ -65,6 +53,6 @@ class CMessage(object):
                 data, = struct.unpack(upkformat, buff[leni*2:self._index])
                 buff = buff[self._index:]
             except Exception:
-                #print('Unpack buffer error.')
+                # print('Unpack buffer error.')
                 break
             client.processrequestcode(reqcode, data)
