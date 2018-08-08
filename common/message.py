@@ -7,7 +7,7 @@ class SMessage(object):
 
     def pack(self, requestcode, data):
         pformat = 'i i {}s'.format(len(data))
-        buff = struct.pack(pformat, (leni + len(data)), requestcode, data)
+        buff = struct.pack(pformat, (leni + len(data)), requestcode, bytes(data))
         return buff
 
 #(len:requestcode:actioncode:data)

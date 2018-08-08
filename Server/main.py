@@ -2,7 +2,7 @@ from Server.server import *
 from Server.controller import *
 
 addr = '127.0.0.1'
-port = 20000
+port = 20001
 
 if __name__ == '__main__':
 
