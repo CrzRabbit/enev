@@ -3,7 +3,6 @@ from Server.client import *
 from Server.controller import *
 from common.common import *
 import asyncio
-from Server.ORM import *
 
 class server(object):
 
@@ -17,12 +16,8 @@ class server(object):
     def __str__(self):
         return '{0}:{1}'.format(self._addr, self._port)
 
-    @asyncio.coroutine
     def serverstart(self, loop):
-
         accountcontroller(loop)
-
-        yield from create_pool(loop, user='root', password='wang0010', database='gameserverdb')
 
         self._socket.listen(0)
         print('Server started. Waiting for connecting...')

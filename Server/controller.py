@@ -1,15 +1,13 @@
 from Server.DAO import *
 from common.common import *
 from Server.tables import *
-import asyncio
 
 controllerdict = dict()
 
 class basecontroller(object):
     def __init__(self, loop):
         # self._requestcode = requestcode.default
-        # self._DAO = DAO(loop, user='root', password='wang0010', database='gameserverdb')
-        pass
+        self._DAO = DAO(loop, user='root', password='wang0010', database='gameserverdb')
 
     def processrequest(self, actcode, data):
         pass
@@ -25,12 +23,11 @@ class accountcontroller(basecontroller):
     def processrequest(self, actcode, data):
         return self._actiondict[actcode](data)
 
-    @asyncio.coroutine
     def registure(self, data):
         name, pwd = data.split()
         user = User(user_name=name, user_pwd=pwd)
         yield from user.save()
-        #return requestcode.account, 'OK'
+        return requestcode.account, 'OK'
 
 # class accountcontroller(basecontroller):
 #     def __init__(self, reqcode = requestcode.account):

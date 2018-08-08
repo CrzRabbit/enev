@@ -15,7 +15,7 @@ class DAO(object):
     _instance = None
     def __new__(cls, loop, *args, **kwargs):
         if not cls._instance:
-           create_pool(loop, **kwargs)
+            create_pool(loop, **kwargs)
         return cls._instance
 
     # def __new__(cls, *args, **kw):
