@@ -7,6 +7,13 @@ def next_id():
 class User(Model):
     __table__ = 'users'
 
+    # id = StringField(primary_key=True, default=next_id, ddl='varchar(50')
+    # email = StringField(ddl='varchar(50)')
+    # passwd = StringField(ddl='varchar(50')
+    # admin = BooleanField()
+    # name = StringField(ddl='varchar(50)')
+    # image = StringField(ddl='varchar(500)')
+    # created_at = FloatField(default=time.time)
     user_index = IntegerField(primary_key=True)
     user_name = StringField(ddl='varchar(20)')
     user_pwd = StringField(ddl='varchar(20)')
