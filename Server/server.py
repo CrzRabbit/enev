@@ -16,17 +16,13 @@ class server(object):
     async def processretdata(self, reqcode, data):
         return self._message.pack(reqcode, data)
 
-    async def processrequest(self, reqcode, actcode, data):
-        retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
-        return retrc, retdata
+    async def processrequest(self, ret):
+        buff = b''
+        for message in ret:
+            reqcode, actcode, data = message.get()
+            retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
+            buff += await self.processretdata(retrc, retdata)
+        return buff
 
-    def remove(self, client):
-        try:
-            self._clientsocket.remove(client)
-        except Exception:
-            print('Close client error.')
-
-    def close(self):
-        self._socket.close()
-        for clientsocket in self._clientsocket:
-            clientsocket.close()
+    async def clear(self):
+        await controllerdict[requestcode.account].processrequest(actioncode.clear, '')

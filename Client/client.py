@@ -28,6 +28,8 @@ class Client(object):
         while True:
             try:
                 buff = self._socket.recv(recvdatalen)
+                if buff != b'':
+                    print('Received {}'.format(buff))
                 thread = threading.Thread(target=self._message.unpack, args=(buff, self))
                 thread.start()
             except Exception:

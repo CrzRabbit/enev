@@ -16,6 +16,8 @@ class accountcontroller(basecontroller):
         self._requestcode = reqcode
         self._actiondict = dict()
         self._actiondict[actioncode.registure] = self.registure
+        self._actiondict[actioncode.updatepwd] = self.updatepwd
+        self._actiondict[actioncode.clear] = self.clear
         super(accountcontroller, self).__init__()
         controllerdict[self._requestcode] = self
 
@@ -29,3 +31,12 @@ class accountcontroller(basecontroller):
         retdata = await user.save()
         usercount += 1
         return self._requestcode, retdata
+
+    async def updatepwd(self, data):
+        name, pwd = data.split()
+        user = User(user_index=0, user_name= name, user_pwd=pwd)
+        retdata = await user.update()
+        return self._requestcode, retdata
+
+    async def clear(self, data):
+        await User.clear()

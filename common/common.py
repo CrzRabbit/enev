@@ -9,5 +9,6 @@ class actioncode(Enum):
     default = 0
     registure = 1
     updatepwd = 2
-    login = 3
-    logout = 4
+    clear = 3
+    login = 4
+    logout = 5

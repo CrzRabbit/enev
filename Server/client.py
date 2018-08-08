@@ -1,7 +1,4 @@
-import threading
 from common.message import *
-from common.common import *
-import asyncio
 
 recvdatalen = 1024
 
@@ -11,8 +8,8 @@ class client(object):
         self._server = server
         self._message = SMessage()
 
-    def processret(self, requestcode, data):
-        buff = self._message.pack(requestcode, data)
+    def processret(self, buff):
+        # buff = self._message.pack(requestcode, data)
         if buff:
             self._socket.send(buff)
 

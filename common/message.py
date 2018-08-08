@@ -2,6 +2,14 @@ import struct
 from common.common import *
 
 leni = struct.calcsize('i')
+class Message(object):
+    def __init__(self, requestcode=requestcode.default, actioncode=actioncode.default, data=''):
+        self._requestcode = requestcode
+        self._actioncode = actioncode
+        self._data= data
+
+    def get(self):
+        return self._requestcode, self._actioncode, self._data
 
 class SMessage(object):
     def pack(self, requestcode, data):
@@ -20,6 +28,7 @@ class SMessage(object):
     async def unpack(self, buff, server):
         self._index = 0
         self._bufflen = len(buff)
+        ret = []
         if self._bufflen < 4:
             return
         while True:
@@ -31,11 +40,12 @@ class SMessage(object):
                 upkformat = '{}s'.format(l - leni*2)
                 data, = struct.unpack(upkformat, buff[leni*3:self._index])
                 print('({0}, {1}, {2})'.format(requestcode(reqcode).name, actioncode(actcode).name, data))
+                ret.append(Message(requestcode(reqcode), actioncode(actcode), data))
                 buff = buff[self._index:]
             except Exception:
                 #print('Unpack buffer error.')
                 break
-            return await server.processrequest(reqcode, actcode, data)
+        return await server.processrequest(ret)
 
 class CMessage(object):
     def pack(self, requestcode, actioncode, data):

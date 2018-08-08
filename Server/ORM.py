@@ -172,7 +172,7 @@ class Model(dict, metaclass=ModelMetaClass):
         if rows != 1:
             logging.warning('Insert value failed, affected rows: {0}'.format(rows))
         elif rows == 1:
-            logging.warning('Insert success~!')
+            logging.info('Insert success.')
             return b'OK'
         return b'ERROR'
 
@@ -182,6 +182,10 @@ class Model(dict, metaclass=ModelMetaClass):
         rows = await execute(self.__update__, args)
         if rows == 0:
             logging.warning('Updata value failed, no rows affected.')
+            return b'ERROR'
+        elif rows==1:
+            logging.info('Update success.')
+        return b'OK'
 
     async def remove(self):
         args = list()
