@@ -1,10 +1,12 @@
 import struct
 import sys
+import asyncio
 from common.common import *
 
 leni = struct.calcsize('i')
 
 class SMessage(object):
+
     def pack(self, requestcode, data):
         pformat = None
         try:
@@ -37,11 +39,11 @@ class SMessage(object):
             server.processrequest(reqcode, actcode, data, client)
 
 class CMessage(object):
+
     def pack(self, requestcode, actioncode, data):
         pformat = None
         try:
             pformat = 'i i i {}s'.format(len(data))
-            print(requestcode, actioncode, data)
             return struct.pack(pformat, leni + leni + len(data), requestcode.value, actioncode.value, bytes(data, encoding='utf-8'))
         except struct.error as e:
             print('Pack Message Error:\n    format: {0}\n    len: {1}\n    requescode: {2}\n    '

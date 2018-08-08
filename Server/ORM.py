@@ -5,24 +5,24 @@ import logging; logging.basicConfig(level=logging.INFO)
 def log(sql, args=()):
     logging.info('SQL: {0}{1}'.format(sql, ' % {0}'.format(tuple(args)) if args else ''))
 
-#@asyncio.coroutine
-def create_pool(loop, **kw):
-    logging.info('create database connection pool...')
-    global __pool
-    __pool = yield from aiomysql.create_pool(
-        host=kw.get('host', 'localhost'),
-        port=kw.get('port', 3306),
-        user=kw['user'],
-        password=kw['password'],
-        db=kw['database'],
-        charset=kw.get('charset', 'utf8'),
-        autocommit=kw.get('autocommit', True),
-        maxsize=kw.get('maxsize', 10),
-        minsize=kw.get('minsize', 1),
-        loop=loop
-    )
+# @asyncio.coroutine
+# def create_pool(loop, **kw):
+#     logging.info('create database connection pool...')
+#     global __pool
+#     __pool = yield from aiomysql.create_pool(
+#         host=kw.get('host', 'localhost'),
+#         port=kw.get('port', 3306),
+#         user=kw['user'],
+#         password=kw['password'],
+#         db=kw['database'],
+#         charset=kw.get('charset', 'utf8'),
+#         autocommit=kw.get('autocommit', True),
+#         maxsize=kw.get('maxsize', 10),
+#         minsize=kw.get('minsize', 1),
+#         loop=loop
+#     )
 
-#@asyncio.coroutine
+@asyncio.coroutine
 def select(sql, args, size=None):
     log(sql.replace('?', '%s'), args)
     global __pool
@@ -37,7 +37,7 @@ def select(sql, args, size=None):
         #logging.info('Rows returned: {0}'.format(len(rs)))
         return rs
 
-#@asyncio.coroutine
+@asyncio.coroutine
 def execute(sql, args, autocommit=True):
     log(sql.replace('?', '%s'), args)
     with (yield from __pool) as conn:
@@ -129,16 +129,16 @@ class Model(dict, metaclass=ModelMetaClass):
                 setattr(self, key, value)
         return value
 
-    #@classmethod
-    #@asyncio.coroutine
+    @classmethod
+    @asyncio.coroutine
     def find(cls, pk):
         rs = yield from select('{0} where {1}=?'.format(cls.__select__, cls.__primary_key__), [pk], 1)
         if len(rs.__dict__['_result']) == 0:
             return None
         return cls(**rs.__dict__['_result'][0])
 
-    #@classmethod
-    #@asyncio.coroutine
+    @classmethod
+    @asyncio.coroutine
     def findAll(cls, where=None, args=None, **kw):
         sql = [cls.__select__]
         if where:
@@ -164,25 +164,22 @@ class Model(dict, metaclass=ModelMetaClass):
         rs = yield from select(' '.join(sql), args)
         return [cls(**r) for r in rs.__dict__['_result']]
 
-    #@classmethod
-    #@asyncio.coroutine
+    @classmethod
+    @asyncio.coroutine
     def clear(cls):
         args = list()
         rows = yield from execute(cls.__delete_all__, args)
         logging.warning('Clear completed, {0} rows affected'.format(rows))
 
-    #@asyncio.coroutine
+    @asyncio.coroutine
     def save(self):
         args = list(map(self.getValueOrDefault, self.__fields__))
         args.append('{0}'.format(self.getValueOrDefault(self.__primary_key__)))
-        print(args)
         rows = yield from execute(self.__insert__, args)
         if rows != 1:
             logging.warning('Insert value failed, affected rows: {0}'.format(rows))
-        elif rows == 0:
-            logging.warning('Insert success~!')
 
-    #@asyncio.coroutine
+    @asyncio.coroutine
     def update(self):
         args = list(map(self.getValue, self.__fields__))
         args.append(self.getValue(self.__primary_key__))
@@ -190,7 +187,7 @@ class Model(dict, metaclass=ModelMetaClass):
         if rows == 0:
             logging.warning('Updata value failed, no rows affected.')
 
-    #@asyncio.coroutine
+    @asyncio.coroutine
     def remove(self):
         args = list()
         args.append(self.getValue(self.__primary_key__))
