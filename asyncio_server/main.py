@@ -21,11 +21,13 @@ async def async_server(reader, writer):
                 writer.write(response_data)
                 await writer.drain()
         except asyncio.streams.IncompleteReadError as e:
-        #don't process data when error
-            pass
+        # don't process data when error, just return
+            print('IncompleteReadError')
+            return None
         except ConnectionResetError as e:
-        #don't process connection error
-            pass
+        # don't process connection error, just return
+            print('COnnectionResetError')
+            return None
 
 async def init(loop):
     await ORM.create_pool(loop, user='root', password='wang0010', database='gameserverdb')
@@ -35,10 +37,12 @@ if __name__ == '__main__':
 
     loop = asyncio.get_event_loop()
 
+    #inti controller and create pool
     controller.accountcontroller()
     loop.run_until_complete(init(loop))
-
+    #init server corotine
     server_coro = asyncio.start_server(async_server, ADDRESS, PORT, loop=loop)
+
     server = loop.run_until_complete(server_coro)
     host = server.sockets[0].getsockname()
     print('Server running on {}...'.format(host))

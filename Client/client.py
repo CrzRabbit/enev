@@ -1,4 +1,4 @@
-import socket
+import socket, time
 import threading
 from common.common import *
 from common.message import *
@@ -35,9 +35,11 @@ class Client(object):
                 thread.start()
             except Exception:
                 print('Lose connection.')
+                self._socket.close()
                 break
 
     def processrequestcode(self, reqcode, data):
+        #print(time.localtime(time.time()))
         print('Received: ({0}, {1})'.format(requestcode(reqcode).name, data))
 
     def registure(self, name, pwd):
