@@ -39,23 +39,19 @@ class Client(object):
 
     def registure(self, name, pwd):
         buff = self._message.pack(requestcode.account, actioncode.registure, name + ' ' + pwd)
-        if buff:
-            self.senddata(buff)
+        self.senddata(buff)
 
     def updatepwd(self, name, pwd):
         buff = self._message.pack(requestcode.account, actioncode.updatepwd, name + ' ' + pwd)
-        if buff:
-            self.senddata(buff)
+        self.senddata(buff)
 
-    def login(self, name, pwd):
-        buff = self._message.pack(requestcode.logio, actioncode.login, name + ' ' + pwd)
-        if buff:
-            self.senddata(buff)
+    def login(self):
+        buff = self._message.pack(requestcode.logio, actioncode.login, '')
+        self.senddata(buff)
 
     def logout(self):
         buff = self._message.pack(requestcode.logio, actioncode.logout, '')
-        if buff:
-            self.senddata(buff)
+        self.senddata(buff)
 
     def senddata(self, buff):
         try:
