@@ -22,9 +22,11 @@ async def async_server(reader, writer):
                 await writer.drain()
         except asyncio.streams.IncompleteReadError as e:
         #don't process data when error
+            return None
             pass
         except ConnectionResetError as e:
         #don't process connection error
+            return None
             pass
 
 async def init(loop):

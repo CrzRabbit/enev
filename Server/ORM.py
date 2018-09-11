@@ -1,4 +1,5 @@
 import aiomysql
+from common.common import *
 import logging; logging.basicConfig(level=logging.INFO)
 
 def log(sql, args=()):
@@ -138,6 +139,20 @@ class Model(dict, metaclass=ModelMetaClass):
         return cls(**rs.__dict__['_result'][0])
 
     @classmethod
+    async def find_s(cls, *args):
+        level = args.__len__()
+        sql = cls.__select__
+        sql += 'where'
+        sql += ' {}=?'.format(cls.__fields__[0])
+        for i in range(1, level):
+            sql += ' and {}=?'.format(cls.__fields__[i])
+        rs = await select(sql, args, 1)
+        print(rs._result)
+        if len(rs._result) == 0:
+            return returncode.fail
+        return returncode.success
+
+    @classmethod
     async def findAll(cls, where=None, args=None, **kw):
         sql = [cls.__select__]
         if where:
@@ -178,8 +193,8 @@ class Model(dict, metaclass=ModelMetaClass):
             logging.warning('Insert value failed, affected rows: {0}'.format(rows))
         elif rows == 1:
             logging.info('Insert success.')
-            return b'OK'
-        return b'ERROR'
+            return returncode.success
+        return returncode.fail
 
     async def update(self):
         args = list(map(self.getValue, self.__fields__))
@@ -187,10 +202,10 @@ class Model(dict, metaclass=ModelMetaClass):
         rows = await execute(self.__update__, args)
         if rows == 0:
             logging.warning('Updata value failed, no rows affected.')
-            return b'ERROR'
+            return returncode.success
         elif rows==1:
             logging.info('Update success.')
-        return b'OK'
+        return returncode.fail
 
     async def remove(self):
         args = list()
