@@ -56,3 +56,18 @@ class accountcontroller(basecontroller):
 
     async def clear(self, data):
         await User.clear()
+
+class roomcontroller(basecontroller):
+
+    def __init__(self, reqcode = requestcode.room):
+        self._requestcode = reqcode
+        self._actiondict = dict()
+        self._actiondict[actioncode.create] = self.create
+        super(roomcontroller, self).__init__()
+        controllerdict[self._requestcode] = self
+
+    async def processrequest(self, actcode, data):
+        return await self._actiondict[actcode](actcode, data)
+
+    async def create(self, actcode, data):
+        pass

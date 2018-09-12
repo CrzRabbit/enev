@@ -3,7 +3,7 @@ from enum import Enum
 class requestcode(Enum):
     default = 0
     account = 1
-    logio = 2
+    room = 2
 
 class actioncode(Enum):
     default = 0
@@ -12,6 +12,8 @@ class actioncode(Enum):
     clear = 3
     login = 4
     logout = 5
+
+    create = 6
 
 class returncode(Enum):
     success = 0
