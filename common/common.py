@@ -12,3 +12,7 @@ class actioncode(Enum):
     clear = 3
     login = 4
     logout = 5
+
+class returncode(Enum):
+    success = 0
+    fail = 1

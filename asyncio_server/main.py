@@ -21,6 +21,7 @@ async def async_server(reader, writer):
                 writer.write(response_data)
                 await writer.drain()
         except asyncio.streams.IncompleteReadError as e:
+
         # don't process data when error, just return
             print('IncompleteReadError')
             return None
