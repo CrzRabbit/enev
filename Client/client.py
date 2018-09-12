@@ -40,7 +40,7 @@ class Client(object):
 
     def processrequestcode(self, reqcode, data):
         #print(time.localtime(time.time()))
-        print('Received: ({0}, {1})'.format(requestcode(reqcode).name, data))
+        print('Received: ({0}, {1})'.format(actioncode(reqcode).name, data))
 
     def registure(self, name, pwd):
         buff = self._message.pack(requestcode.account, actioncode.registure, name + ' ' + pwd + SEPARATOR)
@@ -53,12 +53,12 @@ class Client(object):
             self.senddata(buff)
 
     def login(self, name, pwd):
-        buff = self._message.pack(requestcode.logio, actioncode.login, name + ' ' + pwd + SEPARATOR)
+        buff = self._message.pack(requestcode.account, actioncode.login, name + ' ' + pwd + SEPARATOR)
         if buff:
             self.senddata(buff)
 
     def logout(self):
-        buff = self._message.pack(requestcode.logio, actioncode.logout, '' + SEPARATOR)
+        buff = self._message.pack(requestcode.account, actioncode.logout, '' + SEPARATOR)
         if buff:
             self.senddata(buff)
 

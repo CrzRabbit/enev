@@ -134,23 +134,9 @@ class Model(dict, metaclass=ModelMetaClass):
     @classmethod
     async def find(cls, pk):
         rs = await select('{0} where {1}=?'.format(cls.__select__, cls.__primary_key__), [pk], 1)
-        if len(rs.__dict__['_result']) == 0:
+        if len(rs._result) == 0:
             return None
         return cls(**rs.__dict__['_result'][0])
-
-    @classmethod
-    async def find_s(cls, *args):
-        level = args.__len__()
-        sql = cls.__select__
-        sql += 'where'
-        sql += ' {}=?'.format(cls.__fields__[0])
-        for i in range(1, level):
-            sql += ' and {}=?'.format(cls.__fields__[i])
-        rs = await select(sql, args, 1)
-        print(rs._result)
-        if len(rs._result) == 0:
-            return returncode.fail
-        return returncode.success
 
     @classmethod
     async def findAll(cls, where=None, args=None, **kw):
@@ -176,7 +162,7 @@ class Model(dict, metaclass=ModelMetaClass):
             else:
                 raise ValueError('Invalit limit value: {0}'.format(limit))
         rs = await select(' '.join(sql), args)
-        return [cls(**r) for r in rs.__dict__['_result']]
+        return [cls(**r) for r in rs._result]
 
     @classmethod
     async def clear(cls):
@@ -206,6 +192,19 @@ class Model(dict, metaclass=ModelMetaClass):
         elif rows==1:
             logging.info('Update success.')
         return returncode.fail
+
+    async def verify(cls, *args):
+        level = args.__len__()
+        sql = cls.__select__
+        sql += 'where'
+        sql += ' {}=?'.format(cls.__fields__[0])
+        for i in range(1, level):
+            sql += ' and {}=?'.format(cls.__fields__[i])
+        rs = await select(sql, args, 1)
+        print(rs._result)
+        if len(rs._result) == 0:
+            return returncode.fail
+        return returncode.success
 
     async def remove(self):
         args = list()

@@ -11,6 +11,9 @@ class basecontroller(object):
     def processrequest(self, actcode, data):
         pass
 
+    def enum_to_bytes(self, retcode):
+        return bytes('{}'.format(retcode.value), encoding='utf-8')
+
 class accountcontroller(basecontroller):
     def __init__(self, reqcode = requestcode.account):
         self._requestcode = reqcode
@@ -30,27 +33,27 @@ class accountcontroller(basecontroller):
             name, pwd = data.split()
             user = User(user_index=0, user_name=name, user_pwd=pwd)
             retcode = await user.save()
-            return actcode, bytes('{0}'.format(retcode.value), encoding='utf-8')
+            return actcode, self.enum_to_bytes(retcode)
         except ValueError as e:
-            return actcode, bytes('{0}'.format(returncode.fail.value), encoding='utf-8')
+            return actcode, self.enum_to_bytes(returncode.fail)
 
     async def updatepwd(self, actcode, data):
         try:
             name, pwd = data.split()
             user = User(user_index=0, user_name=name, user_pwd=pwd)
             retcode = await user.update()
-            return actcode, bytes('{0}'.format(retcode.value), encoding='utf-8')
+            return actcode, self.enum_to_bytes(retcode)
         except ValueError as e:
-            return actcode, bytes('{0}'.format(returncode.fail.value), encoding='utf-8')
+            return actcode, self.enum_to_bytes(returncode.fail)
 
     async def login(self, actcode, data):
         try:
             name, pwd = data.split()
             user = User(user_index=0, user_name=name, user_pwd=pwd)
-            retcode = await user.find_s(name, pwd)
-            return actcode, bytes('{0}'.format(retcode.value), encoding='utf-8')
+            retcode = await user.verify(name, pwd)
+            return actcode, self.enum_to_bytes(retcode)
         except ValueError as e:
-            return actcode, bytes('{0}'.format(returncode.fail.value), encoding='utf-8')
+            return actcode, self.enum_to_bytes(returncode.fail)
 
     async def clear(self, data):
         await User.clear()

@@ -13,5 +13,7 @@ if __name__ == '__main__':
     client.registure('101effwfw', 'efwefw')
     client.registure('fwjoihoifwe', 'wefewfw')
     client.updatepwd('wangjiangchuan', 'Wang0010')
+    client.login('wangjiangchuan', 'wang0010')
+
 
     client.join()
