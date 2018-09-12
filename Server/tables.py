@@ -10,3 +10,16 @@ class User(Model):
     user_index = IntegerField(primary_key=True)
     user_name = StringField(ddl='varchar(20)')
     user_pwd = StringField(ddl='varchar(20)')
+    user_level = IntegerField()
+    user_now_exp = IntegerField()
+
+class Room(Model):
+    __table__ = 'rooms'
+
+    room_index = StringField(primary_key=True)
+    room_owner = StringField(ddl='varchar(20)')
+    room_map = StringField(ddl='varchar(40')
+    room_state = BooleanField()
+    room_level = IntegerField()
+    room_now_count = IntegerField()
+    room_max_count = IntegerField()

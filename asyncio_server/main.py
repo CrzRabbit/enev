@@ -14,14 +14,14 @@ async def async_server(reader, writer):
         #client_data = await reader.read(BUFFLEN)
         try:
             client_data = await reader.readuntil(SEPARATOR)
-            client_info = writer.get_extra_info('peername')
+            #client_info = writer.get_extra_info('peername')
             if client_data != b'':
-                print('Received from {0}: {1}'.format(client_info, client_data))
+                #print('Received from {0}: {1}'.format(client_info, client_data))
                 response_data = await server_processor.processdata(client_data)
-                writer.write(response_data)
-                await writer.drain()
+                if response_data:
+                    writer.write(response_data)
+                    await writer.drain()
         except asyncio.streams.IncompleteReadError as e:
-
         # don't process data when error, just return
             print('IncompleteReadError')
             return None

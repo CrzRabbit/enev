@@ -1,4 +1,3 @@
-from common.common import *
 from Server.tables import *
 
 controllerdict = dict()
@@ -31,7 +30,7 @@ class accountcontroller(basecontroller):
     async def registure(self, actcode, data):
         try:
             name, pwd = data.split()
-            user = User(user_index=0, user_name=name, user_pwd=pwd)
+            user = User(user_index=0, user_name=name, user_pwd=pwd, user_level=0, user_now_exp=0)
             retcode = await user.save()
             return actcode, self.enum_to_bytes(retcode)
         except ValueError as e:

@@ -29,7 +29,8 @@ async def select(sql, args, size=None):
         try:
             await cur.execute(sql.replace('?', '%s'), args or ())
         except Exception as e:
-            logging.error('{}\n'.format(e))
+            pass
+            #logging.error('{}\n'.format(e))
         if size:
             rs = cur.fetchmany(size)
         else:
@@ -53,7 +54,8 @@ async def execute(sql, args, autocommit=True):
         except BaseException as e:
             if not autocommit:
                 await conn.rollback()
-            logging.error('{}\n'.format(e))
+            pass
+            # logging.error('{}\n'.format(e))
         return affected
 
 class ModelMetaClass(type):
@@ -176,9 +178,11 @@ class Model(dict, metaclass=ModelMetaClass):
         args.append('{0}'.format(self.getValueOrDefault(self.__primary_key__)))
         rows = await execute(self.__insert__, args)
         if rows != 1:
-            logging.warning('Insert value failed, affected rows: {0}'.format(rows))
+            pass
+            #logging.warning('Insert value failed, affected rows: {0}'.format(rows))
         elif rows == 1:
-            logging.info('Insert success.')
+            pass
+            #logging.info('Insert success.')
             return returncode.success
         return returncode.fail
 
@@ -201,7 +205,7 @@ class Model(dict, metaclass=ModelMetaClass):
         for i in range(1, level):
             sql += ' and {}=?'.format(cls.__fields__[i])
         rs = await select(sql, args, 1)
-        print(rs._result)
+        #print(rs._result)
         if len(rs._result) == 0:
             return returncode.fail
         return returncode.success

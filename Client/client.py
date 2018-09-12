@@ -1,6 +1,5 @@
-import socket, time
+import socket
 import threading
-from common.common import *
 from common.message import *
 
 recvdatalen = 1024

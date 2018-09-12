@@ -22,8 +22,9 @@ class SMessage(object):
             buff = struct.pack(pformat, (leni + len(data)), requestcode.value, data)
             return buff
         except struct.error:
-            print('Pack Message Error:\n    format: {0}\n    len: {1}\n    '
-                  'requestcode: {2}\n    data: {3}'.format(pformat, leni + len(data), requestcode, data))
+            #print('Pack Message Error:\n    format: {0}\n    len: {1}\n    '
+            #      'requestcode: {2}\n    data: {3}'.format(pformat, leni + len(data), requestcode, data))
+
             return None
 
 #(len:requestcode:actioncode:data)
@@ -32,7 +33,7 @@ class SMessage(object):
         self._bufflen = len(buff)
         ret = []
         if self._bufflen < 4:
-            return
+            return None
         while True:
             try:
                 l, = struct.unpack('i', buff[0:leni])
@@ -42,11 +43,12 @@ class SMessage(object):
                 #we should abandon separator: '#'
                 upkformat = '{}s'.format(l - SEPARATOR_LEN - leni*2)
                 data, = struct.unpack(upkformat, buff[leni*3:self._index - SEPARATOR_LEN])
-                print('({0}, {1}, {2})'.format(requestcode(reqcode).name, actioncode(actcode).name, data))
+                #print('({0}, {1}, {2})'.format(requestcode(reqcode).name, actioncode(actcode).name, data))
                 ret.append(Message(requestcode(reqcode), actioncode(actcode), data))
                 buff = buff[self._index:]
             except Exception:
                 #print('Unpack buffer error.')
+                #ret.clear()
                 break
         return await server.processrequest(ret)
 
