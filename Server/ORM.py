@@ -30,7 +30,7 @@ async def select(sql, args, size=None):
             await cur.execute(sql.replace('?', '%s'), args or ())
         except Exception as e:
             pass
-            #logging.error('{}\n'.format(e))
+            logging.error('{}\n'.format(e))
         if size:
             rs = cur.fetchmany(size)
         else:
@@ -55,7 +55,7 @@ async def execute(sql, args, autocommit=True):
             if not autocommit:
                 await conn.rollback()
             pass
-            # logging.error('{}\n'.format(e))
+            logging.error('{}\n'.format(e))
         return affected
 
 class ModelMetaClass(type):
@@ -92,7 +92,7 @@ class ModelMetaClass(type):
         attrs['__fields__'] = fields            #其他属性
         #构造默认的select, insert, update, delete, delete all语句
         attrs['__select__'] = 'SELECT {0}, {1} FROM {2} '.format(primary_key, ', '.join(escaped_fields), tableName)
-        attrs['__insert__'] = 'INSERT INTO {0} ({1}, {2}) VALUES ({3})'.format(tableName, ', '.join(escaped_fields), primary_key, create_args_string(len(escaped_fields) + 1))
+        attrs['__insert__'] = 'INSERT INTO {0} ({1}) VALUES ({2})'.format(tableName, ', '.join(escaped_fields), create_args_string(len(escaped_fields)))
         attrs['__update__'] = 'UPDATE {0} set {1} WHERE {2}=?'.format(tableName, ', '.join(map(lambda f: '{0}=?'.format(mappings.get(f).name or f), fields)), primary_key)
         attrs['__delete__'] = 'DELETE FROM {0} WHERE {1}=?'.format(tableName, primary_key)
         attrs['__delete_all__'] = 'DELETE FROM {0}'.format(tableName)
@@ -175,7 +175,7 @@ class Model(dict, metaclass=ModelMetaClass):
     async def save(self):
         rows = None
         args = list(map(self.getValueOrDefault, self.__fields__))
-        args.append('{0}'.format(self.getValueOrDefault(self.__primary_key__)))
+        #args.append('{0}'.format(self.getValueOrDefault(self.__primary_key__)))
         rows = await execute(self.__insert__, args)
         if rows != 1:
             pass
@@ -216,7 +216,6 @@ class Model(dict, metaclass=ModelMetaClass):
         rows = await execute(self.__delete__, args)
         if rows != 1:
             logging.warning('Remove failed, {0} rows affected.'.format(rows))
-
 
 class Field(object):
 

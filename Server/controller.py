@@ -30,7 +30,7 @@ class accountcontroller(basecontroller):
     async def registure(self, actcode, data):
         try:
             name, pwd = data.split()
-            user = User(user_index=0, user_name=name, user_pwd=pwd, user_level=0, user_now_exp=0)
+            user = User(user_name=name, user_pwd=pwd, user_level=0, user_now_exp=0)
             retcode = await user.save()
             return actcode, self.enum_to_bytes(retcode)
         except ValueError as e:
@@ -70,4 +70,18 @@ class roomcontroller(basecontroller):
         return await self._actiondict[actcode](actcode, data)
 
     async def create(self, actcode, data):
+        try:
+            owner, pwd, scene, state, level, now_count, max_count = data.split()
+            room = Room(room_index=0, room_owner=owner, room_pwd=pwd, room_scene=scene, room_state=bool(state), room_level=int(level)
+                        , room_now_count=int(now_count), room_max_count=int(max_count))
+            retcode = await room.save()
+            return actcode, self.enum_to_bytes(retcode)
+        except ValueError as e:
+            return actcode, self.enum_to_bytes(returncode.fail)
+        pass
+
+    async def list(self, actcode, data):
+        pass
+
+    async def join(self, actcode, data):
         pass

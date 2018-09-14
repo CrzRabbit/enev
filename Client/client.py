@@ -61,6 +61,12 @@ class Client(object):
         if buff:
             self.senddata(buff)
 
+    def create_room(self, owner, pwd, scene, state, level, now_count, max_count):
+        buff = self._message.pack(requestcode.room, actioncode.create, owner + ' ' + pwd + ' ' + scene + ' '
+                                  + state + ' ' + level + ' ' + now_count + ' ' + max_count + SEPARATOR)
+        if buff:
+            self.senddata(buff)
+
     def senddata(self, buff):
         try:
             self._socket.send(buff)

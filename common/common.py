@@ -14,6 +14,9 @@ class actioncode(Enum):
     logout = 5
 
     create = 6
+    list = 7
+    join = 8
+    remove = 9
 
 class returncode(Enum):
     success = 0

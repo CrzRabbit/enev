@@ -40,6 +40,7 @@ if __name__ == '__main__':
 
     #inti controller and create pool
     controller.accountcontroller()
+    controller.roomcontroller()
     loop.run_until_complete(init(loop))
     #init server corotine
     server_coro = asyncio.start_server(async_server, ADDRESS, PORT, loop=loop)

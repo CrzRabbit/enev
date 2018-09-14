@@ -13,6 +13,7 @@ if __name__ == '__main__':
     for i in range(0,test_amount):
         client.registure('wangjiangchuan', 'wang0010')
         client.login('wangjiangchuan', 'wang0010')
+        client.create_room('wangjiangchuan', '101686', 'test_scene', '0', '1', '1', '6')
         time.sleep(0.5)
 
     client.join()

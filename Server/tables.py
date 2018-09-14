@@ -18,7 +18,9 @@ class Room(Model):
 
     room_index = StringField(primary_key=True)
     room_owner = StringField(ddl='varchar(20)')
-    room_map = StringField(ddl='varchar(40')
+    room_pwd = StringField(ddl='varchar(6)')
+    room_scene = StringField(ddl='varchar(40')
+    #ready or playing
     room_state = BooleanField()
     room_level = IntegerField()
     room_now_count = IntegerField()
