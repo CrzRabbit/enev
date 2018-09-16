@@ -30,7 +30,7 @@ class accountcontroller(basecontroller):
     async def registure(self, actcode, data):
         try:
             name, pwd = data.split()
-            user = User(user_name=name, user_pwd=pwd, user_level=0, user_now_exp=0)
+            user = User(user_name=name, user_pwd=pwd, user_level=0, user_cur_exp=0)
             retcode = await user.save()
             return actcode, self.enum_to_bytes(retcode)
         except ValueError as e:
@@ -49,8 +49,8 @@ class accountcontroller(basecontroller):
         try:
             name, pwd = data.split()
             user = User(user_index=0, user_name=name, user_pwd=pwd)
-            retcode = await user.verify(name, pwd)
-            return actcode, self.enum_to_bytes(retcode)
+            retcode, user = await user.verify(name, pwd)
+            return actcode, self.enum_to_bytes(retcode) + bytes(' {0} {1} {2} {3}'.format(user.user_index, user.user_name, user.user_level, user.user_cur_exp), encoding='utf-8')
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
 
@@ -63,6 +63,7 @@ class roomcontroller(basecontroller):
         self._requestcode = reqcode
         self._actiondict = dict()
         self._actiondict[actioncode.create] = self.create
+        self._actiondict[actioncode.list] = self.list
         super(roomcontroller, self).__init__()
         controllerdict[self._requestcode] = self
 
@@ -71,17 +72,31 @@ class roomcontroller(basecontroller):
 
     async def create(self, actcode, data):
         try:
-            owner, pwd, scene, state, level, now_count, max_count = data.split()
-            room = Room(room_index=0, room_owner=owner, room_pwd=pwd, room_scene=scene, room_state=bool(state), room_level=int(level)
-                        , room_now_count=int(now_count), room_max_count=int(max_count))
+            print(data)
+            name, owner, pwd, ip, port, scene, state, level, now_count, max_count = data.split()
+            if pwd == b'@':
+                pwd = ''
+            room = Room(room_index=0, room_name=name, room_owner=owner, room_pwd=pwd, room_ip=ip, room_port=port, room_scene=scene, room_state=bool(state), room_level=int(level)
+                        , room_cur_count=int(now_count), room_max_count=int(max_count))
             retcode = await room.save()
             return actcode, self.enum_to_bytes(retcode)
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
-        pass
 
     async def list(self, actcode, data):
-        pass
+        try:
+            retcode, rooms = await Room.findAll()
+            rooms_data = self.enum_to_bytes(retcode)
+            for room in rooms:
+                if room.room_pwd == '':
+                    room.room_pwd = '@'
+                rooms_data += bytes('|{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}'
+                                    .format(room.room_index, room.room_name, room.room_owner, room.room_pwd, room.room_ip,
+                                            room.room_port, room.room_scene, room.room_state, room.room_level,
+                                            room.room_cur_count, room.room_max_count), encoding='utf-8')
+            return actcode, rooms_data
+        except ValueError as e:
+            return actcode, self.enum_to_bytes(returncode.fail)
 
     async def join(self, actcode, data):
         pass

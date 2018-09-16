@@ -27,7 +27,7 @@ async def async_server(reader, writer):
             return None
         except ConnectionResetError as e:
         # don't process connection error, just return
-            print('COnnectionResetError')
+            print('ConnectionResetError')
             return None
 
 async def init(loop):

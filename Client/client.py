@@ -61,9 +61,14 @@ class Client(object):
         if buff:
             self.senddata(buff)
 
-    def create_room(self, owner, pwd, scene, state, level, now_count, max_count):
-        buff = self._message.pack(requestcode.room, actioncode.create, owner + ' ' + pwd + ' ' + scene + ' '
+    def create_room(self, name, owner, pwd, ip, port, scene, state, level, now_count, max_count):
+        buff = self._message.pack(requestcode.room, actioncode.create, name + ' ' + owner + ' ' + pwd + ' ' + ip + ' ' + port + ' ' + scene + ' '
                                   + state + ' ' + level + ' ' + now_count + ' ' + max_count + SEPARATOR)
+        if buff:
+            self.senddata(buff)
+
+    def list_room(self):
+        buff = self._message.pack(requestcode.room, actioncode.list, ' ' + SEPARATOR)
         if buff:
             self.senddata(buff)
 
