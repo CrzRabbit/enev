@@ -192,10 +192,12 @@ class Model(dict, metaclass=ModelMetaClass):
         rows = await execute(self.__update__, args)
         if rows == 0:
             logging.warning('Updata value failed, no rows affected.')
-            return returncode.success
+            return returncode.fail
         elif rows==1:
             logging.info('Update success.')
+            return returncode.success
         return returncode.fail
+
     @classmethod
     async def verify(cls, *args):
         level = args.__len__()

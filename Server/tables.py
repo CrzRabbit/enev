@@ -23,7 +23,7 @@ class Room(Model):
     room_ip = StringField(ddl='varchar(20)')
     room_port = IntegerField()
     room_scene = StringField(ddl='varchar(40')
-    #ready or playing
+    #state ready or playing
     room_state = BooleanField()
     room_level = IntegerField()
     room_cur_count = IntegerField()

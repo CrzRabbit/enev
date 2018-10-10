@@ -11,9 +11,10 @@ if __name__ == '__main__':
 
     #print(time.localtime(time.time()))
     for i in range(0,test_amount):
-        client.registure('wangjiangchuan', 'wang0010')
-        client.login('wangjiangchuan', 'wang0010')
-        client.create_room('testroom', 'wangjiangchuan', '@', '127.0.0.1', '20001', '0', '0', '1', '1', '6')
+        #client.registure('wangjiangchuan', 'wang0010')
+        #client.login('wangjiangchuan', 'wang0010')
+        #client.create_room('testroom', 'wangjiangchuan', '@', '127.0.0.1', '20001', '0', '0', '1', '1', '6')
+        client.update_room('3', 'testroom', 'wangjiangchuan', '@', '127.0.0.1', '20001', '0', '0', '1', '2', '6')
         client.list_room()
         time.sleep(0.5)
 

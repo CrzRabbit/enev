@@ -64,6 +64,7 @@ class roomcontroller(basecontroller):
         self._actiondict = dict()
         self._actiondict[actioncode.create] = self.create
         self._actiondict[actioncode.list] = self.list
+        self._actiondict[actioncode.update] = self.update
         super(roomcontroller, self).__init__()
         controllerdict[self._requestcode] = self
 
@@ -72,7 +73,6 @@ class roomcontroller(basecontroller):
 
     async def create(self, actcode, data):
         try:
-            print(data)
             name, owner, pwd, ip, port, scene, state, level, now_count, max_count = data.split()
             if pwd == b'@':
                 pwd = ''
@@ -95,6 +95,20 @@ class roomcontroller(basecontroller):
                                             room.room_port, room.room_scene, room.room_state, room.room_level,
                                             room.room_cur_count, room.room_max_count), encoding='utf-8')
             return actcode, rooms_data
+        except ValueError as e:
+            return actcode, self.enum_to_bytes(returncode.fail)
+
+    async def update(self, actcode, data):
+        try:
+            index, name, owner, pwd, ip, port, scene, state, level, now_count, max_count = data.split()
+            if pwd == b'@':
+                pwd = ''
+            room = Room(room_index=index, room_name=name, room_owner=owner, room_pwd=pwd, room_ip=ip, room_port=port,
+                        room_scene=scene, room_state=bool(state), room_level=int(level)
+                        , room_cur_count=int(now_count), room_max_count=int(max_count))
+            retcode = await room.update()
+            return actcode, self.enum_to_bytes(retcode)
+            pass
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
 
