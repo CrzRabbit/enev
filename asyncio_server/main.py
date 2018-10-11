@@ -10,6 +10,7 @@ server_processor = server.server(ADDRESS, PORT)
 
 async def async_server(reader, writer):
     while True:
+        server_processor.save_client(writer)
         await writer.drain()
         #client_data = await reader.read(BUFFLEN)
         try:
@@ -28,7 +29,13 @@ async def async_server(reader, writer):
         except ConnectionResetError as e:
         # don't process connection error, just return
             print('ConnectionResetError')
+            server_processor.remove_client(writer)
             return None
+
+async def send_to_client(writer, data):
+    if data:
+        writer.write(data)
+        await writer.drain()
 
 async def init(loop):
     await ORM.create_pool(loop, user='root', password='wang0010', database='gameserverdb')
