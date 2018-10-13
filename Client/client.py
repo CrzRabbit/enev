@@ -2,7 +2,7 @@ import socket
 import threading
 from common.message import *
 
-recvdatalen = 1024
+recvdatalen = 8096
 SEPARATOR = '#'
 
 class Client(object):
