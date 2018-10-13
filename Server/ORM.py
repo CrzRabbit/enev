@@ -164,7 +164,9 @@ class Model(dict, metaclass=ModelMetaClass):
             else:
                 raise ValueError('Invalit limit value: {0}'.format(limit))
         rs = await select(' '.join(sql), args)
-        return returncode.fail, [cls(**r) for r in rs._result]
+        if len(rs._result) == 0:
+            return returncode.fail, None
+        return returncode.success, [cls(**r) for r in rs._result]
 
     @classmethod
     async def clear(cls):
@@ -210,7 +212,7 @@ class Model(dict, metaclass=ModelMetaClass):
         print(rs._result)
         if len(rs._result) == 0:
             #print(rs._result)
-            return returncode.fail
+            return returncode.fail, None
         return returncode.success, cls(**rs._result[0])
 
     async def remove(self):

@@ -50,7 +50,9 @@ class accountcontroller(basecontroller):
             name, pwd = data.split()
             user = User(user_index=0, user_name=name, user_pwd=pwd)
             retcode, user = await user.verify(name, pwd)
-            return actcode, self.enum_to_bytes(retcode) + bytes(' {0} {1} {2} {3}'.format(user.user_index, user.user_name, user.user_level, user.user_cur_exp), encoding='utf-8')
+            if user:
+                return actcode, self.enum_to_bytes(retcode) + bytes(' {0} {1} {2} {3}'.format(user.user_index, user.user_name, user.user_level, user.user_cur_exp), encoding='utf-8')
+            return actcode, self.enum_to_bytes(returncode.fail)
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
 
