@@ -6,7 +6,7 @@ PORT = 20000
 BUFFLEN = 2048
 SEPARATOR = b'#'
 
-server_processor = server.server(ADDRESS, PORT)
+server_processor = server.server()
 
 async def async_server(reader, writer):
     while True:
