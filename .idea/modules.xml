@@ -2,13 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../Lua/.idea/Lua.iml" filepath="$PROJECT_DIR$/../Lua/.idea/Lua.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../PyTool/.idea/PyTool.iml" filepath="$PROJECT_DIR$/../PyTool/.idea/PyTool.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Python/.idea/Python.iml" filepath="$PROJECT_DIR$/../Python/.idea/Python.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../PythonPractice/.idea/PythonPractice.iml" filepath="$PROJECT_DIR$/../PythonPractice/.idea/PythonPractice.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Shader/.idea/Shader.iml" filepath="$PROJECT_DIR$/../Shader/.idea/Shader.iml" />
-      <module fileurl="file://$USER_HOME$/BlueTooth/SuntecBt_old/.idea/SuntecBt_old.iml" filepath="$USER_HOME$/BlueTooth/SuntecBt_old/.idea/SuntecBt_old.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Test/.idea/Test.iml" filepath="$PROJECT_DIR$/../Test/.idea/Test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/enev.iml" filepath="$PROJECT_DIR$/.idea/enev.iml" />
     </modules>
   </component>

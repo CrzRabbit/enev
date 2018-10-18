@@ -6,11 +6,12 @@ PORT = 20000
 BUFFLEN = 2048
 SEPARATOR = b'#'
 
-server_processor = server.server(ADDRESS, PORT)
+server_processor = server.server()
 
 async def async_server(reader, writer):
     while True:
         server_processor.save_client(writer)
+        server_processor.set_currentclient(writer)
         await writer.drain()
         #client_data = await reader.read(BUFFLEN)
         try:
@@ -22,6 +23,8 @@ async def async_server(reader, writer):
                 if response_data:
                     writer.write(response_data)
                     await writer.drain()
+                else:
+                    print("[ERROR] get wrong data from client: {}".format(client_data))
         except asyncio.streams.IncompleteReadError as e:
         # don't process data when error, just return
             print('IncompleteReadError')

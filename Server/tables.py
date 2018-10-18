@@ -6,15 +6,18 @@ def next_id():
 
 class User(Model):
     __table__ = 'users'
+    __id__ = ('user_name', 'user_pwd')
 
     user_index = IntegerField(primary_key=True)
     user_name = StringField(ddl='varchar(20)')
     user_pwd = StringField(ddl='varchar(20)')
     user_level = IntegerField()
     user_cur_exp = IntegerField()
+    user_online = BooleanField()
 
 class Room(Model):
     __table__ = 'rooms'
+    __id__ = ('room_index')
 
     room_index = StringField(primary_key=True)
     room_name = StringField(ddl='varchar(40)')

@@ -66,6 +66,7 @@ class ModelMetaClass(type):
             return type.__new__(cls, name, bases, attrs)
         #获取tablename
         tableName = attrs.get('__table__', None) or name
+        tableId = attrs.get('__id__', None)
         logging.info('Find model {0} (table {1}).'.format(name, tableName))
         #获取所有field和主键名
         mappings = dict()
@@ -90,6 +91,7 @@ class ModelMetaClass(type):
         attrs['__table__'] = tableName          #表名
         attrs['__primary_key__'] = primary_key  #主键
         attrs['__fields__'] = fields            #其他属性
+        attrs['__id__'] = tableId
         #构造默认的select, insert, update, delete, delete all语句
         attrs['__select__'] = 'SELECT {0}, {1} FROM {2} '.format(primary_key, ', '.join(escaped_fields), tableName)
         attrs['__insert__'] = 'INSERT INTO {0} ({1}) VALUES ({2})'.format(tableName, ', '.join(escaped_fields), create_args_string(len(escaped_fields)))
@@ -205,9 +207,9 @@ class Model(dict, metaclass=ModelMetaClass):
         level = args.__len__()
         sql = cls.__select__
         sql += 'where'
-        sql += ' {}=?'.format(cls.__fields__[0])
+        sql += ' {}=?'.format(cls.__id__[0])
         for i in range(1, level):
-            sql += ' and {}=?'.format(cls.__fields__[i])
+            sql += ' and {}=?'.format(cls.__id__[i])
         rs = await select(sql, args, 1)
         print(rs._result)
         if len(rs._result) == 0:
@@ -221,6 +223,10 @@ class Model(dict, metaclass=ModelMetaClass):
         rows = await execute(self.__delete__, args)
         if rows != 1:
             logging.warning('Remove failed, {0} rows affected.'.format(rows))
+            return returncode.fail
+        elif rows == 1:
+            return returncode.success
+        return returncode.fail
 
 class Field(object):
 

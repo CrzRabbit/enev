@@ -13,6 +13,7 @@ class Message(object):
     def get(self):
         return self._requestcode, self._actioncode, self._data
 
+#message for server
 class SMessage(object):
     def pack(self, requestcode, data):
         pformat = None
@@ -24,7 +25,6 @@ class SMessage(object):
         except struct.error:
             #print('Pack Message Error:\n    format: {0}\n    len: {1}\n    '
             #      'requestcode: {2}\n    data: {3}'.format(pformat, leni + len(data), requestcode, data))
-
             return None
 
 #(len:requestcode:actioncode:data)
@@ -52,6 +52,7 @@ class SMessage(object):
                 break
         return await server.processrequest(ret)
 
+#message for client
 class CMessage(object):
     def pack(self, requestcode, actioncode, data):
         pformat = None

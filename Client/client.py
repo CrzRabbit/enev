@@ -44,41 +44,46 @@ class Client(object):
     def registure(self, name, pwd):
         buff = self._message.pack(requestcode.account, actioncode.registure, name + ' ' + pwd + SEPARATOR)
         if buff:
-            self.senddata(buff)
+            self.send_data(buff)
 
     def updatepwd(self, name, pwd):
         buff = self._message.pack(requestcode.account, actioncode.updatepwd, name + ' ' + pwd + SEPARATOR)
         if buff:
-            self.senddata(buff)
+            self.send_data(buff)
 
     def login(self, name, pwd):
         buff = self._message.pack(requestcode.account, actioncode.login, name + ' ' + pwd + SEPARATOR)
         if buff:
-            self.senddata(buff)
+            self.send_data(buff)
 
-    def logout(self):
-        buff = self._message.pack(requestcode.account, actioncode.logout, '' + SEPARATOR)
+    def logout(self, name, pwd):
+        buff = self._message.pack(requestcode.account, actioncode.logout, name + ' ' + pwd + SEPARATOR)
         if buff:
-            self.senddata(buff)
+            self.send_data(buff)
 
     def create_room(self, name, owner, pwd, ip, port, scene, state, level, now_count, max_count):
         buff = self._message.pack(requestcode.room, actioncode.create, name + ' ' + owner + ' ' + pwd + ' ' + ip + ' ' + port + ' ' + scene + ' '
                                   + state + ' ' + level + ' ' + now_count + ' ' + max_count + SEPARATOR)
         if buff:
-            self.senddata(buff)
+            self.send_data(buff)
 
     def list_room(self):
         buff = self._message.pack(requestcode.room, actioncode.list, ' ' + SEPARATOR)
         if buff:
-            self.senddata(buff)
+            self.send_data(buff)
 
     def update_room(self, index, name, owner, pwd, ip, port, scene, state, level, now_count, max_count):
         buff = self._message.pack(requestcode.room, actioncode.update, index + ' ' + name + ' ' + owner + ' ' + pwd + ' ' + ip + ' ' + port + ' ' + scene + ' '
                                   + state + ' ' + level + ' ' + now_count + ' ' + max_count + SEPARATOR)
         if buff:
-            self.senddata(buff)
+            self.send_data(buff)
 
-    def senddata(self, buff):
+    def remove_room(self, index):
+        buff = self._message.pack(requestcode.room, actioncode.remove, index + SEPARATOR)
+        if buff:
+            self.send_data(buff)
+
+    def send_data(self, buff):
         try:
             self._socket.send(buff)
         except socket.error:

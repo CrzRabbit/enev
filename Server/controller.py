@@ -21,6 +21,7 @@ class accountcontroller(basecontroller):
         self._actiondict[actioncode.updatepwd] = self.updatepwd
         self._actiondict[actioncode.clear] = self.clear
         self._actiondict[actioncode.login] = self.login
+        self._actiondict[actioncode.logout] = self.logout
         super(accountcontroller, self).__init__()
         controllerdict[self._requestcode] = self
 
@@ -50,8 +51,23 @@ class accountcontroller(basecontroller):
             name, pwd = data.split()
             user = User(user_index=0, user_name=name, user_pwd=pwd)
             retcode, user = await user.verify(name, pwd)
-            if user:
-                return actcode, self.enum_to_bytes(retcode) + bytes(' {0} {1} {2} {3}'.format(user.user_index, user.user_name, user.user_level, user.user_cur_exp), encoding='utf-8')
+            if user and user.user_online == 0:
+                user.user_online = 1
+                await user.update()
+                return actcode, self.enum_to_bytes(retcode) + bytes(' {0} {1} {2} {3} {4}'.format(user.user_index, user.user_name, user.user_level, user.user_cur_exp, user.user_online), encoding='utf-8')
+            return actcode, self.enum_to_bytes(returncode.fail)
+        except ValueError as e:
+            return actcode, self.enum_to_bytes(returncode.fail)
+
+    async def logout(self, actcode, data):
+        try:
+            name, pwd = data.split()
+            user = User(user_index=0, user_name=name, user_pwd=pwd)
+            retcode, user = await user.verify(name, pwd)
+            if user and user.user_online == 1:
+                user.user_online = 0
+                retcode = await user.update()
+                return actcode, self.enum_to_bytes(retcode)
             return actcode, self.enum_to_bytes(returncode.fail)
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
@@ -67,6 +83,7 @@ class roomcontroller(basecontroller):
         self._actiondict[actioncode.create] = self.create
         self._actiondict[actioncode.list] = self.list
         self._actiondict[actioncode.update] = self.update
+        self._actiondict[actioncode.remove] = self.remove
         super(roomcontroller, self).__init__()
         controllerdict[self._requestcode] = self
 
@@ -110,7 +127,15 @@ class roomcontroller(basecontroller):
                         , room_cur_count=int(now_count), room_max_count=int(max_count))
             retcode = await room.update()
             return actcode, self.enum_to_bytes(retcode)
-            pass
+        except ValueError as e:
+            return actcode, self.enum_to_bytes(returncode.fail)
+
+    async def remove(self, actcode, data):
+        try:
+            index = data
+            room = Room(room_index=index)
+            retcode = await room.remove()
+            return actcode, self.enum_to_bytes(retcode)
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
 
