@@ -7,6 +7,7 @@ class server(object):
     def __init__(self):
         self._message = SMessage()
         self._controllerdict = controllerdict
+        #just stream writers for send data to client
         self._clients = list()
         self._currentclient = None
 
@@ -22,15 +23,12 @@ class server(object):
             reqcode, actcode, data = message.get()
             retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
             if reqcode == requestcode.room and (actcode == actioncode.create or actcode == actioncode.update):
-                retrc, retdata = await  controllerdict[requestcode(reqcode)].processrequest(actioncode(actioncode.list), '')
+                retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actioncode.list), '')
                 data = b''
                 data += await self.processretdata(retrc, retdata)
                 await self.send_all(data)
             buff += await self.processretdata(retrc, retdata)
         return buff
-
-    async def clear(self):
-        await controllerdict[requestcode.account].processrequest(actioncode.clear, '')
 
     def save_client(self, client):
         if not self._clients.__contains__(client):
@@ -47,3 +45,7 @@ class server(object):
             if client != self._currentclient:
                 client.write(data)
                 await client.drain()
+
+    async def clear(self):
+        await controllerdict[requestcode.account].processrequest(actioncode.clear, '')
+

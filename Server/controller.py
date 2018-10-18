@@ -127,7 +127,6 @@ class roomcontroller(basecontroller):
                         , room_cur_count=int(now_count), room_max_count=int(max_count))
             retcode = await room.update()
             return actcode, self.enum_to_bytes(retcode)
-            pass
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
 
