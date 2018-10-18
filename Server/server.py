@@ -8,6 +8,7 @@ class server(object):
         self._message = SMessage()
         self._controllerdict = controllerdict
         self._clients = list()
+        self._currentclient = None
 
     async def processdata(self, data):
         return await self._message.unpack(data, self)
@@ -32,12 +33,17 @@ class server(object):
         await controllerdict[requestcode.account].processrequest(actioncode.clear, '')
 
     def save_client(self, client):
-        self._clients.append(client)
+        if not self._clients.__contains__(client):
+            self._clients.append(client)
 
     def remove_client(self, client):
         self._clients.remove(client)
 
+    def set_currentclient(self, client):
+        self._currentclient = client
+
     async def send_all(self, data):
         for client in self._clients:
-            client.write(data)
-            await client.drain()
+            if client != self._currentclient:
+                client.write(data)
+                await client.drain()

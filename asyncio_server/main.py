@@ -11,6 +11,7 @@ server_processor = server.server()
 async def async_server(reader, writer):
     while True:
         server_processor.save_client(writer)
+        server_processor.set_currentclient(writer)
         await writer.drain()
         #client_data = await reader.read(BUFFLEN)
         try:

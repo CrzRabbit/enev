@@ -56,8 +56,8 @@ class Client(object):
         if buff:
             self.senddata(buff)
 
-    def logout(self):
-        buff = self._message.pack(requestcode.account, actioncode.logout, '' + SEPARATOR)
+    def logout(self, name, pwd):
+        buff = self._message.pack(requestcode.account, actioncode.logout, name + ' ' + pwd + SEPARATOR)
         if buff:
             self.senddata(buff)
 
@@ -75,6 +75,11 @@ class Client(object):
     def update_room(self, index, name, owner, pwd, ip, port, scene, state, level, now_count, max_count):
         buff = self._message.pack(requestcode.room, actioncode.update, index + ' ' + name + ' ' + owner + ' ' + pwd + ' ' + ip + ' ' + port + ' ' + scene + ' '
                                   + state + ' ' + level + ' ' + now_count + ' ' + max_count + SEPARATOR)
+        if buff:
+            self.senddata(buff)
+
+    def remove_room(self, index):
+        buff = self._message.pack(requestcode.room, actioncode.remove, index + SEPARATOR)
         if buff:
             self.senddata(buff)
 
