@@ -9,6 +9,7 @@ class server(object):
         #just stream writers for send data to client
         self._clients = list()
         self._currentclient = None
+        self._users = dict()
 
     async def processdata(self, data):
         return await self._message.unpack(data, self)
@@ -23,9 +24,13 @@ class server(object):
             retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
             if reqcode == requestcode.room and (actcode == actioncode.create or actcode == actioncode.update):
                 retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actioncode.list), '')
-                data = b''
-                data += await self.processretdata(retrc, retdata)
-                await self.send_all(data)
+                rooms_data = b''
+                rooms_data += await self.processretdata(retrc, retdata)
+                await self.send_all(rooms_data)
+            if reqcode == requestcode.account and actcode == actioncode.login:
+                name, pwd = data.split()
+                user = User(user_name=name, user_pwd=pwd)
+                self._users[self._currentclient] = user
             buff += await self.processretdata(retrc, retdata)
         return buff
 
@@ -33,8 +38,13 @@ class server(object):
         if not self._clients.__contains__(client):
             self._clients.append(client)
 
-    def remove_client(self, client):
+    async def remove_client(self, client):
         self._clients.remove(client)
+        try:
+            user = self._users[client]
+            await controllerdict[requestcode.account].processrequest(actioncode.logout, user.user_name + b' ' + user.user_pwd)
+        except KeyError as e:
+            pass
 
     def set_currentclient(self, client):
         self._currentclient = client

@@ -1,5 +1,6 @@
 import asyncio
 from Server import *
+from debug.log import *
 
 ADDRESS = '127.0.0.1'
 PORT = 20000
@@ -27,12 +28,13 @@ async def async_server(reader, writer):
                     print("[ERROR] get wrong data from client: {}".format(client_data))
         except asyncio.streams.IncompleteReadError as e:
         # don't process data when error, just return
-            print('IncompleteReadError')
+            logi(logcf.base, 'IncompleteReadError')
+            await server_processor.remove_client(writer)
             return None
         except ConnectionResetError as e:
         # don't process connection error, just return
-            print('ConnectionResetError')
-            server_processor.remove_client(writer)
+            logi(logcf.base, 'ConnectionResetError')
+            await server_processor.remove_client(writer)
             return None
 
 async def send_to_client(writer, data):
@@ -57,13 +59,13 @@ if __name__ == '__main__':
 
     server = loop.run_until_complete(server_coro)
     host = server.sockets[0].getsockname()
-    print('Server running on {}...'.format(host))
+    logi(logcf.base, 'Server running on {}...'.format(host))
     try:
         loop.run_forever()
     except KeyboardInterrupt:
-        print('Server closed.')
+        logi(logcf.base, 'Server closed.')
         server.close()
         loop.run_until_complete(server.wait_closed())
     finally:
         loop.close()
-        print('Loop closed.')
+        logi(logcf.base, 'Loop closed.')

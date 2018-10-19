@@ -1,12 +1,12 @@
 import aiomysql
 from common.common import *
-import logging; logging.basicConfig(level=logging.INFO)
+from debug.log import *
 
 def log(sql, args=()):
-    logging.info('SQL: {0}{1}'.format(sql, ' % {0}'.format(tuple(args)) if args else ''))
+    logi(logcf.database, 'SQL: {0}{1}'.format(sql, ' % {0}'.format(tuple(args)) if args else ''))
 
 async def create_pool(loop, **kw):
-    logging.info('create database connection pool...')
+    logi(logcf.base, 'create database connection pool...')
     global __pool
     __pool = await aiomysql.create_pool(
         host=kw.get('host', '127.0.0.1'),
@@ -29,14 +29,12 @@ async def select(sql, args, size=None):
         try:
             await cur.execute(sql.replace('?', '%s'), args or ())
         except Exception as e:
-            pass
-            logging.error('{}\n'.format(e))
+            loge(logcf.database, '{}\n'.format(e))
         if size:
             rs = cur.fetchmany(size)
         else:
             rs = cur.fetchall()
         await cur.close()
-        #logging.info('Rows returned: {0}'.format(len(rs)))
         return rs
 
 async def execute(sql, args, autocommit=True):
@@ -55,7 +53,7 @@ async def execute(sql, args, autocommit=True):
             if not autocommit:
                 await conn.rollback()
             pass
-            logging.error('{}\n'.format(e))
+            loge(logcf.database, '{}\n'.format(e))
         return affected
 
 class ModelMetaClass(type):
@@ -67,7 +65,7 @@ class ModelMetaClass(type):
         #获取tablename
         tableName = attrs.get('__table__', None) or name
         tableId = attrs.get('__id__', None)
-        logging.info('Find model {0} (table {1}).'.format(name, tableName))
+        logi(logcf.modle, 'Find model {0} (table {1}).'.format(name, tableName))
         #获取所有field和主键名
         mappings = dict()
         fields = []
@@ -131,7 +129,7 @@ class Model(dict, metaclass=ModelMetaClass):
             field = self.__mappings__[key]
             if field.default is not None:
                 value = field.default() if callable(field.default) else field.default
-                logging.debug('Using default value for {0}: {1}'.format(key, value))
+                logd(logcf.modle, 'Using default value for {0}: {1}'.format(key, value))
                 setattr(self, key, value)
         return value
 
@@ -174,7 +172,7 @@ class Model(dict, metaclass=ModelMetaClass):
     async def clear(cls):
         args = list()
         rows = await execute(cls.__delete_all__, args)
-        logging.warning('Clear completed, {0} rows affected'.format(rows))
+        logd(logcf.modle, 'Clear completed, {0} rows affected'.format(rows))
 
     async def save(self):
         rows = None
@@ -182,11 +180,9 @@ class Model(dict, metaclass=ModelMetaClass):
         #args.append('{0}'.format(self.getValueOrDefault(self.__primary_key__)))
         rows = await execute(self.__insert__, args)
         if rows != 1:
-            pass
-            #logging.warning('Insert value failed, affected rows: {0}'.format(rows))
+            logw(logcf.database, 'Insert value failed, affected rows: {0}'.format(rows))
         elif rows == 1:
-            pass
-            #logging.info('Insert success.')
+            logi(logcf.database, 'Insert success.')
             return returncode.success
         return returncode.fail
 
@@ -195,10 +191,10 @@ class Model(dict, metaclass=ModelMetaClass):
         args.append(self.getValue(self.__primary_key__))
         rows = await execute(self.__update__, args)
         if rows == 0:
-            logging.warning('Updata value failed, no rows affected.')
+            logw(logcf.database, 'Updata value failed, no rows affected.')
             return returncode.fail
         elif rows==1:
-            logging.info('Update success.')
+            logi(logcf.database, 'Update success.')
             return returncode.success
         return returncode.fail
 
@@ -211,7 +207,6 @@ class Model(dict, metaclass=ModelMetaClass):
         for i in range(1, level):
             sql += ' and {}=?'.format(cls.__id__[i])
         rs = await select(sql, args, 1)
-        print(rs._result)
         if len(rs._result) == 0:
             #print(rs._result)
             return returncode.fail, None
@@ -222,7 +217,7 @@ class Model(dict, metaclass=ModelMetaClass):
         args.append(self.getValue(self.__primary_key__))
         rows = await execute(self.__delete__, args)
         if rows != 1:
-            logging.warning('Remove failed, {0} rows affected.'.format(rows))
+            logw(logcf.database, 'Remove failed, {0} rows affected.'.format(rows))
             return returncode.fail
         elif rows == 1:
             return returncode.success

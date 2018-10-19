@@ -58,7 +58,7 @@ class CMessage(object):
         pformat = None
         try:
             pformat = 'i i i {}s'.format(len(data))
-            print(requestcode, actioncode, data)
+            #print(requestcode, actioncode, data)
             return struct.pack(pformat, leni + leni + len(data), requestcode.value, actioncode.value, bytes(data, encoding='utf-8'))
         except struct.error as e:
             print('Pack Message Error:\n    format: {0}\n    len: {1}\n    requescode: {2}\n    '

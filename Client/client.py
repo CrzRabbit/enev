@@ -4,6 +4,7 @@ from common.message import *
 
 recvdatalen = 8096
 SEPARATOR = '#'
+count = 0
 
 class Client(object):
     def __init__(self, addr, port):
@@ -39,7 +40,11 @@ class Client(object):
 
     def processrequestcode(self, reqcode, data):
         #print(time.localtime(time.time()))
-        print('Received: ({0}, {1})'.format(actioncode(reqcode).name, data))
+        #print('Received: ({0}, {1})'.format(actioncode(reqcode).name, data))
+        global count
+        count += 1
+        print('Received: {}'.format(count))
+        pass
 
     def registure(self, name, pwd):
         buff = self._message.pack(requestcode.account, actioncode.registure, name + ' ' + pwd + SEPARATOR)
