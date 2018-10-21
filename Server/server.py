@@ -22,10 +22,10 @@ class server(object):
         for message in ret:
             reqcode, actcode, data = message.get()
             retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
-            if reqcode == requestcode.room and (actcode == actioncode.create or actcode == actioncode.update):
-                retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actioncode.list), '')
+            if reqcode == requestcode.room and (actcode == actioncode.create or actcode == actioncode.update or actcode == actioncode.remove):
+                retrc1, retdata1 = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actioncode.list), '')
                 rooms_data = b''
-                rooms_data += await self.processretdata(retrc, retdata)
+                rooms_data += await self.processretdata(retrc1, retdata1)
                 await self.send_all(rooms_data)
             if reqcode == requestcode.account and actcode == actioncode.login:
                 name, pwd = data.split()

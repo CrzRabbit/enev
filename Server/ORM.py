@@ -65,6 +65,7 @@ class ModelMetaClass(type):
         #获取tablename
         tableName = attrs.get('__table__', None) or name
         tableId = attrs.get('__id__', None)
+        tableIdB = attrs.get('__id_b__', None)
         logi(logcf.modle, 'Find model {0} (table {1}).'.format(name, tableName))
         #获取所有field和主键名
         mappings = dict()
@@ -90,6 +91,7 @@ class ModelMetaClass(type):
         attrs['__primary_key__'] = primary_key  #主键
         attrs['__fields__'] = fields            #其他属性
         attrs['__id__'] = tableId
+        attrs['__id_b__'] = tableIdB
         #构造默认的select, insert, update, delete, delete all语句
         attrs['__select__'] = 'SELECT {0}, {1} FROM {2} '.format(primary_key, ', '.join(escaped_fields), tableName)
         attrs['__insert__'] = 'INSERT INTO {0} ({1}) VALUES ({2})'.format(tableName, ', '.join(escaped_fields), create_args_string(len(escaped_fields)))
@@ -209,6 +211,20 @@ class Model(dict, metaclass=ModelMetaClass):
         rs = await select(sql, args, 1)
         if len(rs._result) == 0:
             #print(rs._result)
+            return returncode.fail, None
+        return returncode.success, cls(**rs._result[0])
+
+    @classmethod
+    async def verify_b(cls, *args):
+        level = args.__len__()
+        sql = cls.__select__
+        sql += 'where'
+        sql += ' {}=?'.format(cls.__id_b__[0])
+        for i in range(1, level):
+            sql += ' and {}=?'.format(cls.__id_b__[i])
+        rs = await select(sql, args, 1)
+        if len(rs._result) == 0:
+            # print(rs._result)
             return returncode.fail, None
         return returncode.success, cls(**rs._result[0])
 

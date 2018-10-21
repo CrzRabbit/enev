@@ -18,6 +18,7 @@ class User(Model):
 class Room(Model):
     __table__ = 'rooms'
     __id__ = ('room_index')
+    __id_b__ = ('room_ip', 'room_port')
 
     room_index = StringField(primary_key=True)
     room_name = StringField(ddl='varchar(40)')

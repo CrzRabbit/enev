@@ -52,7 +52,7 @@ class accountcontroller(basecontroller):
             user = User(user_index=0, user_name=name, user_pwd=pwd)
             retcode, user = await user.verify(name, pwd)
             if user and user.user_online == 0:
-                user.user_online = 1
+                user.user_online = 0
                 await user.update()
                 return actcode, self.enum_to_bytes(retcode) + bytes(' {0} {1} {2} {3} {4}'.format(user.user_index, user.user_name, user.user_level, user.user_cur_exp, user.user_online), encoding='utf-8')
             return actcode, self.enum_to_bytes(returncode.fail)
@@ -98,6 +98,16 @@ class roomcontroller(basecontroller):
             room = Room(room_index=0, room_name=name, room_owner=owner, room_pwd=pwd, room_ip=ip, room_port=port, room_scene=scene, room_state=bool(state), room_level=int(level)
                         , room_cur_count=int(now_count), room_max_count=int(max_count))
             retcode = await room.save()
+            if retcode == returncode.success:
+                retcode, room = await room.verify_b(ip, port)
+                room_data = self.enum_to_bytes(retcode)
+                if room.room_pwd == '':
+                    room.room_pwd = '@'
+                room_data += bytes('|{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}'
+                                    .format(room.room_index, room.room_name, room.room_owner, room.room_pwd, room.room_ip,
+                                            room.room_port, room.room_scene, room.room_state, room.room_level,
+                                            room.room_cur_count, room.room_max_count), encoding='utf-8')
+                return actcode, room_data
             return actcode, self.enum_to_bytes(retcode)
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
