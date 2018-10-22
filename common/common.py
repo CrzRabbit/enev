@@ -8,7 +8,7 @@ class requestcode(Enum):
 class actioncode(Enum):
     default = 0
     registure = 1
-    updatepwd = 2
+    updateinfo = 2
     clear = 3
     login = 4
     logout = 5

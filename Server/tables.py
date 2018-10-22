@@ -6,7 +6,7 @@ def next_id():
 
 class User(Model):
     __table__ = 'users'
-    __id__ = ('user_name', 'user_pwd')
+    __id__ = (('user_index',), ('user_name', 'user_pwd'))
 
     user_index = IntegerField(primary_key=True)
     user_name = StringField(ddl='varchar(20)')
@@ -17,8 +17,7 @@ class User(Model):
 
 class Room(Model):
     __table__ = 'rooms'
-    __id__ = ('room_index')
-    __id_b__ = ('room_ip', 'room_port')
+    __id__ = (('room_index',), ('room_ip', 'room_port'))
 
     room_index = StringField(primary_key=True)
     room_name = StringField(ddl='varchar(40)')

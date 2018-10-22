@@ -18,7 +18,7 @@ class accountcontroller(basecontroller):
         self._requestcode = reqcode
         self._actiondict = dict()
         self._actiondict[actioncode.registure] = self.registure
-        self._actiondict[actioncode.updatepwd] = self.updatepwd
+        self._actiondict[actioncode.updateinfo] = self.updateinfo
         self._actiondict[actioncode.clear] = self.clear
         self._actiondict[actioncode.login] = self.login
         self._actiondict[actioncode.logout] = self.logout
@@ -37,10 +37,22 @@ class accountcontroller(basecontroller):
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
 
-    async def updatepwd(self, actcode, data):
+    #infotype： 0(user_pwd) 1(user_level) 2(usr_cur_exp)
+    async def updateinfo(self, actcode, data):
         try:
-            name, pwd = data.split()
-            user = User(user_index=0, user_name=name, user_pwd=pwd)
+            index_bytes, infotype_bytes, info = data.split()
+            index = int(index_bytes)
+            infotype = int(infotype_bytes)
+            user = User(user_index=index)
+            retcode, user = await user.verify(0, index)
+            if infotype == 0:
+                user.user_pwd = info
+            elif infotype == 1:
+                user.user_level = int(info)
+            elif infotype == 2:
+                user.usr_cur_exp = int(info)
+            else:
+                return actcode, self.enum_to_bytes(returncode.fail)
             retcode = await user.update()
             return actcode, self.enum_to_bytes(retcode)
         except ValueError as e:
@@ -49,8 +61,8 @@ class accountcontroller(basecontroller):
     async def login(self, actcode, data):
         try:
             name, pwd = data.split()
-            user = User(user_index=0, user_name=name, user_pwd=pwd)
-            retcode, user = await user.verify(name, pwd)
+            user = User(user_name=name, user_pwd=pwd)
+            retcode, user = await user.verify(1, name, pwd)
             if user and user.user_online == 0:
                 user.user_online = 0
                 await user.update()
@@ -63,7 +75,7 @@ class accountcontroller(basecontroller):
         try:
             name, pwd = data.split()
             user = User(user_index=0, user_name=name, user_pwd=pwd)
-            retcode, user = await user.verify(name, pwd)
+            retcode, user = await user.verify(1, name, pwd)
             if user and user.user_online == 1:
                 user.user_online = 0
                 retcode = await user.update()
@@ -99,7 +111,7 @@ class roomcontroller(basecontroller):
                         , room_cur_count=int(now_count), room_max_count=int(max_count))
             retcode = await room.save()
             if retcode == returncode.success:
-                retcode, room = await room.verify_b(ip, port)
+                retcode, room = await room.verify(1, ip, port)
                 room_data = self.enum_to_bytes(retcode)
                 if room.room_pwd == '':
                     room.room_pwd = '@'
