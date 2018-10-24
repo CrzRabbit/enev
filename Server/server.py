@@ -51,9 +51,9 @@ class server(object):
 
     async def send_all(self, data):
         for client in self._clients:
-            if client != self._currentclient:
-                client.write(data)
-                await client.drain()
+            #if client != self._currentclient:
+            client.write(data)
+            await client.drain()
 
     async def clear(self):
         await controllerdict[requestcode.account].processrequest(actioncode.clear, '')
