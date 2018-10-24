@@ -129,6 +129,10 @@ class roomcontroller(basecontroller):
             retcode, rooms = await Room.findAll()
             rooms_data = self.enum_to_bytes(retcode)
             for room in rooms:
+                #将无人的房间删除掉
+                if room.room_cur_count == 0:
+                    await room.remove()
+                    continue
                 if room.room_pwd == '':
                     room.room_pwd = '@'
                 rooms_data += bytes('|{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}'
@@ -141,12 +145,12 @@ class roomcontroller(basecontroller):
 
     async def update(self, actcode, data):
         try:
-            index, name, owner, pwd, ip, port, scene, state, level, now_count, max_count = data.split()
+            index, name, owner, pwd, ip, port, scene, state, level, cur_count, max_count = data.split()
             if pwd == b'@':
                 pwd = ''
             room = Room(room_index=index, room_name=name, room_owner=owner, room_pwd=pwd, room_ip=ip, room_port=port,
                         room_scene=scene, room_state=bool(state), room_level=int(level)
-                        , room_cur_count=int(now_count), room_max_count=int(max_count))
+                        , room_cur_count=int(cur_count), room_max_count=int(max_count))
             retcode = await room.update()
             return actcode, self.enum_to_bytes(retcode)
         except ValueError as e:
