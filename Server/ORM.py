@@ -199,13 +199,13 @@ class Model(dict, metaclass=ModelMetaClass):
         return returncode.fail
 
     @classmethod
-    async def verify(cls, idindx, *args):
+    async def verify(cls, idindex, *args):
         level = args.__len__()
         sql = cls.__select__
         sql += 'where'
-        sql += ' {}=?'.format(cls.__id__[idindx][0])
+        sql += ' {}=?'.format(cls.__id__[idindex][0])
         for i in range(1, level):
-            sql += ' and {}=?'.format(cls.__id__[idindx][i])
+            sql += ' and {}=?'.format(cls.__id__[idindex][i])
         rs = await select(sql, args, 1)
         if len(rs._result) == 0:
             #print(rs._result)

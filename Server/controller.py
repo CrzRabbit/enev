@@ -64,7 +64,7 @@ class accountcontroller(basecontroller):
             user = User(user_name=name, user_pwd=pwd)
             retcode, user = await user.verify(1, name, pwd)
             if user and user.user_online == 0:
-                user.user_online = 0
+                user.user_online = 1
                 await user.update()
                 return actcode, self.enum_to_bytes(retcode) + bytes(' {0} {1} {2} {3} {4}'.format(user.user_index, user.user_name, user.user_level, user.user_cur_exp, user.user_online), encoding='utf-8')
             return actcode, self.enum_to_bytes(returncode.fail)
@@ -96,8 +96,11 @@ class roomcontroller(basecontroller):
         self._actiondict[actioncode.list] = self.list
         self._actiondict[actioncode.update] = self.update
         self._actiondict[actioncode.remove] = self.remove
+        self._actiondict[actioncode.clear_empty] = self.clear_empty
         super(roomcontroller, self).__init__()
         controllerdict[self._requestcode] = self
+
+        self._empty_count = 0
 
     async def processrequest(self, actcode, data):
         return await self._actiondict[actcode](actcode, data)
@@ -128,10 +131,14 @@ class roomcontroller(basecontroller):
         try:
             retcode, rooms = await Room.findAll()
             rooms_data = self.enum_to_bytes(retcode)
+            self._empty_count = 0
             for room in rooms:
-                #将无人的房间删除掉
+                #当无人的房间超过100, 删除所有无人的房间
                 if room.room_cur_count == 0:
-                    await room.remove()
+                    self._empty_count += 1
+                    if self._empty_count >= 100:
+                        # await self.clear_empty(actioncode.clear_empty, None)
+                        pass
                     continue
                 if room.room_pwd == '':
                     room.room_pwd = '@'
@@ -161,6 +168,23 @@ class roomcontroller(basecontroller):
             index = data
             room = Room(room_index=index)
             retcode = await room.remove()
+            return actcode, self.enum_to_bytes(retcode)
+        except ValueError as e:
+            return actcode, self.enum_to_bytes(returncode.fail)
+
+    async def clear_empty(self, actcode, data):
+        try:
+            if data:
+                user_name = data
+                retcode, room = await Room.verify(2, user_name)
+                if retcode == returncode.success and room.room_cur_count == 1:
+                    await room.remove()
+            else:
+                print('clear empty: {}'.format(self._empty_count))
+                retcode, rooms = await Room.findAll(where='room_cur_count=?', args=(0,))
+                if retcode == returncode.success:
+                    for room in rooms:
+                        await room.remove()
             return actcode, self.enum_to_bytes(retcode)
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)

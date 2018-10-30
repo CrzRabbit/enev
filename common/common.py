@@ -18,6 +18,7 @@ class actioncode(Enum):
     update = 8
     join = 9
     remove = 10
+    clear_empty = 11
 
 class returncode(Enum):
     success = 0

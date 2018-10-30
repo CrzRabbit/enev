@@ -43,6 +43,8 @@ class server(object):
         try:
             user = self._users[client]
             await controllerdict[requestcode.account].processrequest(actioncode.logout, user.user_name + b' ' + user.user_pwd)
+            #只有房主一个人的房间,房主掉线则删除这个房间
+            await controllerdict[requestcode.room].processrequest(actioncode.clear_empty, user.user_name)
         except KeyError as e:
             pass
 
