@@ -120,10 +120,10 @@ class Model(dict, metaclass=ModelMetaClass):
     def __setattr__(self, key, value):
         self[key] = value
 
-    def getValue(self, key):
+    def get_value(self, key):
         return getattr(self, key, None)
 
-    def getValueOrDefault(self, key):
+    def get_value_or_default(self, key):
         value = getattr(self, key, None)
         if value is None:
             field = self.__mappings__[key]
@@ -141,7 +141,7 @@ class Model(dict, metaclass=ModelMetaClass):
         return cls(**rs._result[0])
 
     @classmethod
-    async def findAll(cls, where=None, args=None, **kw):
+    async def find_all(cls, where=None, args=None, **kw):
         sql = [cls.__select__]
         if where:
             sql.append('where')
@@ -176,8 +176,8 @@ class Model(dict, metaclass=ModelMetaClass):
 
     async def save(self):
         rows = None
-        args = list(map(self.getValueOrDefault, self.__fields__))
-        #args.append('{0}'.format(self.getValueOrDefault(self.__primary_key__)))
+        args = list(map(self.get_value_or_default, self.__fields__))
+        #args.append('{0}'.format(self.get_value_or_default(self.__primary_key__)))
         rows = await execute(self.__insert__, args)
         if rows != 1:
             logw(logcf.database, 'Insert value failed, affected rows: {0}'.format(rows))
@@ -187,8 +187,8 @@ class Model(dict, metaclass=ModelMetaClass):
         return returncode.fail
 
     async def update(self):
-        args = list(map(self.getValue, self.__fields__))
-        args.append(self.getValue(self.__primary_key__))
+        args = list(map(self.get_value, self.__fields__))
+        args.append(self.get_value(self.__primary_key__))
         rows = await execute(self.__update__, args)
         if rows == 0:
             logw(logcf.database, 'Updata value failed, no rows affected.')
@@ -214,7 +214,7 @@ class Model(dict, metaclass=ModelMetaClass):
 
     async def remove(self):
         args = list()
-        args.append(self.getValue(self.__primary_key__))
+        args.append(self.get_value(self.__primary_key__))
         rows = await execute(self.__delete__, args)
         if rows != 1:
             logw(logcf.database, 'Remove failed, {0} rows affected.'.format(rows))

@@ -129,15 +129,15 @@ class roomcontroller(basecontroller):
 
     async def list(self, actcode, data):
         try:
-            retcode, rooms = await Room.findAll()
+            retcode, rooms = await Room.find_all()
             rooms_data = self.enum_to_bytes(retcode)
             self._empty_count = 0
             for room in rooms:
-                #当无人的房间超过100, 删除所有无人的房间
+                #当空房间超过100,清除所有空房间
                 if room.room_cur_count == 0:
                     self._empty_count += 1
                     if self._empty_count >= 100:
-                        # await self.clear_empty(actioncode.clear_empty, None)
+                        await self.clear_empty(actioncode.clear_empty, None)
                         pass
                     continue
                 if room.room_pwd == '':
@@ -181,7 +181,7 @@ class roomcontroller(basecontroller):
                     await room.remove()
             else:
                 print('clear empty: {}'.format(self._empty_count))
-                retcode, rooms = await Room.findAll(where='room_cur_count=?', args=(0,))
+                retcode, rooms = await Room.find_all(where='room_cur_count=?', args=(0,))
                 if retcode == returncode.success:
                     for room in rooms:
                         await room.remove()
