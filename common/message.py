@@ -61,8 +61,8 @@ class CMessage(object):
             #print(requestcode, actioncode, data)
             return struct.pack(pformat, leni + leni + len(data), requestcode.value, actioncode.value, bytes(data, encoding='utf-8'))
         except struct.error as e:
-            print('Pack Message Error:\n    format: {0}\n    len: {1}\n    requescode: {2}\n    '
-                  'actioncode: {3}\n    data: {4}'.format(pformat, leni + leni + len(data), requestcode, actioncode, data))
+            # print('Pack Message Error:\n    format: {0}\n    len: {1}\n    requescode: {2}\n    '
+            #       'actioncode: {3}\n    data: {4}'.format(pformat, leni + leni + len(data), requestcode, actioncode, data))
             return None
 
 #(len:requestcode:data)
