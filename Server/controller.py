@@ -110,7 +110,7 @@ class roomcontroller(basecontroller):
             name, owner, pwd, ip, port, scene, state, level, now_count, max_count = data.split()
             if pwd == b'@':
                 pwd = ''
-            room = Room(room_index=0, room_name=name, room_owner=owner, room_pwd=pwd, room_ip=ip, room_port=port, room_scene=scene, room_state=bool(state), room_level=int(level)
+            room = Room(room_index=0, room_name=name, room_owner=owner, room_pwd=pwd, room_ip=ip, room_port=port, room_scene=scene, room_state=(state == b'1'), room_level=int(level)
                         , room_cur_count=int(now_count), room_max_count=int(max_count))
             retcode = await room.save()
             if retcode == returncode.success:
@@ -131,6 +131,9 @@ class roomcontroller(basecontroller):
         try:
             retcode, rooms = await Room.find_all()
             rooms_data = self.enum_to_bytes(retcode)
+            if rooms == None:
+                rooms_data += b'| '
+                return actcode, rooms_data
             self._empty_count = 0
             for room in rooms:
                 #当空房间超过100,清除所有空房间
@@ -156,7 +159,7 @@ class roomcontroller(basecontroller):
             if pwd == b'@':
                 pwd = ''
             room = Room(room_index=index, room_name=name, room_owner=owner, room_pwd=pwd, room_ip=ip, room_port=port,
-                        room_scene=scene, room_state=bool(state), room_level=int(level)
+                        room_scene=scene, room_state=(state == b'1'), room_level=int(level)
                         , room_cur_count=int(cur_count), room_max_count=int(max_count))
             retcode = await room.update()
             return actcode, self.enum_to_bytes(retcode)
