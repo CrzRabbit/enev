@@ -47,8 +47,8 @@ async def init(loop):
     await ORM.create_pool(loop, user='root', password='wang0010', database='gameserverdb')
 
 if __name__ == '__main__':
-    global host
 
+    global host
     loop = asyncio.get_event_loop()
 
     #inti controller and create pool
