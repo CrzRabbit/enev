@@ -23,3 +23,4 @@ class actioncode(Enum):
 class returncode(Enum):
     success = 0
     fail = 1
+    cont = 2

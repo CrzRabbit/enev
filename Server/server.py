@@ -24,13 +24,19 @@ class server(object):
             retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
             if reqcode == requestcode.room and (actcode == actioncode.create or actcode == actioncode.update or actcode == actioncode.remove):
                 retrc1, retdata1 = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actioncode.list), '')
-                rooms_data = b''
-                rooms_data += await self.processretdata(retrc1, retdata1)
-                await self.send_all(rooms_data)
+                for pkg in retdata1:
+                    rooms_data = b''
+                    rooms_data += await self.processretdata(retrc1, pkg)
+                    await self.send_all(rooms_data)
             if reqcode == requestcode.account and actcode == actioncode.login:
                 name, pwd = data.split()
                 user = User(user_name=name, user_pwd=pwd)
                 self._users[self._currentclient] = user
+            if reqcode == requestcode.room and actcode == actioncode.list:
+                for pkg in retdata:
+                    buff = await self.processretdata(retrc, pkg)
+                    await self.send_current(buff)
+                return None
             buff += await self.processretdata(retrc, retdata)
         return buff
 
@@ -56,6 +62,10 @@ class server(object):
             #if client != self._currentclient:
             client.write(data)
             await client.drain()
+
+    async def send_current(self, data):
+        self._currentclient.write(data)
+        await self._currentclient.drain()
 
     async def clear(self):
         await controllerdict[requestcode.account].processrequest(actioncode.clear, '')

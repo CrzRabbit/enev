@@ -130,7 +130,9 @@ class roomcontroller(basecontroller):
     async def list(self, actcode, data):
         try:
             retcode, rooms = await Room.find_all()
-            rooms_data = self.enum_to_bytes(retcode)
+            rooms_data_pkgs = list()
+            rooms_data = b''
+            room_count = 0
             self._empty_count = 0
             for room in rooms:
                 #当空房间超过100,清除所有空房间
@@ -142,11 +144,19 @@ class roomcontroller(basecontroller):
                     continue
                 if room.room_pwd == '':
                     room.room_pwd = '@'
+                if room_count % 50 == 0:
+                    if room_count == 0:
+                        rooms_data = self.enum_to_bytes(retcode)
+                    else:
+                        rooms_data_pkgs.append(rooms_data)
+                        rooms_data = self.enum_to_bytes(returncode.cont)
                 rooms_data += bytes('|{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}'
                                     .format(room.room_index, room.room_name, room.room_owner, room.room_pwd, room.room_ip,
                                             room.room_port, room.room_scene, room.room_state, room.room_level,
                                             room.room_cur_count, room.room_max_count), encoding='utf-8')
-            return actcode, rooms_data
+                room_count += 1
+            rooms_data_pkgs.append(rooms_data)
+            return actcode, rooms_data_pkgs
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
 
