@@ -165,7 +165,7 @@ class Model(dict, metaclass=ModelMetaClass):
                 raise ValueError('Invalit limit value: {0}'.format(limit))
         rs = await select(' '.join(sql), args)
         if len(rs._result) == 0:
-            return returncode.fail, None
+            return returncode.fail, list()
         return returncode.success, [cls(**r) for r in rs._result]
 
     @classmethod

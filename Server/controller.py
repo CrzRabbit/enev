@@ -84,6 +84,16 @@ class accountcontroller(basecontroller):
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
 
+    async def offline_all(self, actcode, data):
+        try:
+            retcode, users = await User.find_all()
+            for user in users:
+                user.user_online = 0
+                await user.update()
+            return actcode, self.enum_to_bytes(returncode.success)
+        except ValueError as e:
+            return actcode, self.enum_to_bytes(returncode.fail)
+
     async def clear(self, data):
         await User.clear()
 
@@ -179,6 +189,15 @@ class roomcontroller(basecontroller):
             room = Room(room_index=index)
             retcode = await room.remove()
             return actcode, self.enum_to_bytes(retcode)
+        except ValueError as e:
+            return actcode, self.enum_to_bytes(returncode.fail)
+
+    async def remove_all(self, actcode, data):
+        try:
+            retcode, rooms = await Room.find_all()
+            for room in rooms:
+                await room.remove()
+            return actcode, self.enum_to_bytes(returncode.success)
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
 

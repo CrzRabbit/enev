@@ -2,6 +2,7 @@
 import asyncio
 from Server import *
 from debug.log import *
+from common.common import *
 
 ADDRESS = '127.0.0.1'
 PORT = 20000
@@ -43,18 +44,24 @@ async def send_to_client(writer, data):
         writer.write(data)
         await writer.drain()
 
-async def init(loop):
+async def init(accountctrl, roomctrl, loop):
+    # connect database
     await ORM.create_pool(loop, user='root', password='wang0010', database='gameserverdb')
+    # make all users offline
+    await accountctrl.offline_all(actioncode.offlineall, '')
+    # clear all rooms
+    await roomctrl.remove_all(actioncode.remove_all, '')
 
 if __name__ == '__main__':
 
     global host
     loop = asyncio.get_event_loop()
 
-    #inti controller and create pool
-    controller.accountcontroller()
-    controller.roomcontroller()
-    loop.run_until_complete(init(loop))
+    #init controller and create pool
+    accountctrl =  controller.accountcontroller()
+    roomctrl = controller.roomcontroller()
+    loop.run_until_complete(init(accountctrl, roomctrl, loop))
+
     #init server corotine
     server_coro = asyncio.start_server(async_server, ADDRESS, PORT, loop=loop)
 

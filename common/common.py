@@ -12,6 +12,7 @@ class actioncode(Enum):
     clear = 3
     login = 4
     logout = 5
+    offlineall = 12
 
     create = 6
     list = 7
@@ -19,6 +20,7 @@ class actioncode(Enum):
     join = 9
     remove = 10
     clear_empty = 11
+    remove_all = 13
 
 class returncode(Enum):
     success = 0
