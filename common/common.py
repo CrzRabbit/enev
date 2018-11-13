@@ -12,7 +12,7 @@ class actioncode(Enum):
     clear = 3
     login = 4
     logout = 5
-    offlineall = 12
+    offline_all = 12
 
     create = 6
     list = 7

@@ -172,7 +172,10 @@ class Model(dict, metaclass=ModelMetaClass):
     async def clear(cls):
         args = list()
         rows = await execute(cls.__delete_all__, args)
-        logd(logcf.modle, 'Clear completed, {0} rows affected'.format(rows))
+        if rows == 0:
+            logd(logcf.modle, 'Clear completed, {0} rows affected'.format(rows))
+            return returncode.fail
+        return returncode.success
 
     async def save(self):
         rows = None

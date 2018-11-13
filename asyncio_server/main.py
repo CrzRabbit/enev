@@ -48,7 +48,7 @@ async def init(accountctrl, roomctrl, loop):
     # connect database
     await ORM.create_pool(loop, user='root', password='wang0010', database='gameserverdb')
     # make all users offline
-    await accountctrl.offline_all(actioncode.offlineall, '')
+    await accountctrl.offline_all(actioncode.offline_all, '')
     # clear all rooms
     await roomctrl.remove_all(actioncode.remove_all, '')
 
