@@ -10,7 +10,7 @@ class logcf(Enum):
     modle = 3
     message = 4
 
-logconf = (logcf.base, logcf.database)
+logconf = (logcf.base, )
 
 def logi(logcf, info):
     if logconf.__contains__(logcf):

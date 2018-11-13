@@ -28,7 +28,7 @@ async def async_server(reader, writer):
                     writer.write(response_data)
                     await writer.drain()
                 else:
-                    print("[ERROR] get wrong data from client: {}".format(client_data))
+                    loge(logcf.message, "[ERROR] get wrong data from client: {}".format(client_data))
         except asyncio.streams.IncompleteReadError as e:
         # don't process data when error, just return
             logi(logcf.base, 'IncompleteReadError')
