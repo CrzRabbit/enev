@@ -4,7 +4,8 @@ from Server import *
 from debug.log import *
 from common.common import *
 
-ADDRESS = '127.0.0.1'
+LOCAL_ADDRESS = '127.0.0.1'
+SERVER_ADDRESS = '172.27.0.15'
 PORT = 20000
 BUFFLEN = 2048
 SEPARATOR = b'#'
@@ -48,7 +49,7 @@ async def init(accountctrl, roomctrl, loop):
     # connect database
     await ORM.create_pool(loop, user='root', password='wang0010', database='gameserverdb')
     # make all users offline
-    await accountctrl.offline_all(actioncode.offlineall, '')
+    await accountctrl.offline_all(actioncode.offline_all, '')
     # clear all rooms
     await roomctrl.remove_all(actioncode.remove_all, '')
 
@@ -63,7 +64,7 @@ if __name__ == '__main__':
     loop.run_until_complete(init(accountctrl, roomctrl, loop))
 
     #init server corotine
-    server_coro = asyncio.start_server(async_server, ADDRESS, PORT, loop=loop)
+    server_coro = asyncio.start_server(async_server, SERVER_ADDRESS, PORT, loop=loop)
 
     server = loop.run_until_complete(server_coro)
     host = server.sockets[0].getsockname()

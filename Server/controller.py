@@ -45,6 +45,8 @@ class accountcontroller(basecontroller):
             infotype = int(infotype_bytes)
             user = User(user_index=index)
             retcode, user = await user.verify(0, index)
+            if user == None:
+                raise ValueError
             if infotype == 0:
                 user.user_pwd = info
             elif infotype == 1:
@@ -194,10 +196,8 @@ class roomcontroller(basecontroller):
 
     async def remove_all(self, actcode, data):
         try:
-            retcode, rooms = await Room.find_all()
-            for room in rooms:
-                await room.remove()
-            return actcode, self.enum_to_bytes(returncode.success)
+            retcode = await Room.clear()
+            return actcode, self.enum_to_bytes(retcode)
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
 
