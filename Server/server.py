@@ -58,10 +58,13 @@ class server(object):
         self._currentclient = client
 
     async def send_all(self, data):
-        for client in self._clients:
-            #if client != self._currentclient:
-            client.write(data)
-            await client.drain()
+        try:
+            for client in self._clients:
+                #if client != self._currentclient:
+                client.write(data)
+                await client.drain()
+        except BrokenPipeError as e:
+            pass
 
     async def send_current(self, data):
         self._currentclient.write(data)
