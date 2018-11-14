@@ -26,3 +26,5 @@ class returncode(Enum):
     success = 0
     fail = 1
     cont = 2
+    update = 3
+    remove = 4

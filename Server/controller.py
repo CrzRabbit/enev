@@ -128,16 +128,19 @@ class roomcontroller(basecontroller):
             if retcode == returncode.success:
                 retcode, room = await room.verify(1, ip, port)
                 room_data = self.enum_to_bytes(retcode)
+                newroom_data = self.enum_to_bytes(returncode.cont)
                 if room.room_pwd == '':
                     room.room_pwd = '@'
-                room_data += bytes('|{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}'
+                room_bytes = bytes('|{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}'
                                     .format(room.room_index, room.room_name, room.room_owner, room.room_pwd, room.room_ip,
                                             room.room_port, room.room_scene, room.room_state, room.room_level,
                                             room.room_cur_count, room.room_max_count), encoding='utf-8')
-                return actcode, room_data
-            return actcode, self.enum_to_bytes(retcode)
+                room_data += room_bytes
+                newroom_data += room_bytes
+                return actcode, (room_data, newroom_data)
+            return actcode, (self.enum_to_bytes(retcode), self.enum_to_bytes(returncode.fail))
         except ValueError as e:
-            return actcode, self.enum_to_bytes(returncode.fail)
+            return actcode, (self.enum_to_bytes(returncode.fail), self.enum_to_bytes(returncode.fail))
 
     async def list(self, actcode, data):
         try:
@@ -181,18 +184,32 @@ class roomcontroller(basecontroller):
                         room_scene=scene, room_state=(state == b'1'), room_level=int(level)
                         , room_cur_count=int(cur_count), room_max_count=int(max_count))
             retcode = await room.update()
-            return actcode, self.enum_to_bytes(retcode)
+            if retcode == returncode.success:
+                newroom_data = self.enum_to_bytes(returncode.update)
+                room_bytes = bytes('|{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}'
+                                   .format(room.room_index, room.room_name, room.room_owner, room.room_pwd,
+                                           room.room_ip,
+                                           room.room_port, room.room_scene, room.room_state, room.room_level,
+                                           room.room_cur_count, room.room_max_count), encoding='utf-8')
+                newroom_data += room_bytes
+                return actcode, (self.enum_to_bytes(retcode), newroom_data)
+            return actcode, (self.enum_to_bytes(retcode), self.enum_to_bytes(returncode.fail))
         except ValueError as e:
-            return actcode, self.enum_to_bytes(returncode.fail)
+            return actcode, (self.enum_to_bytes(returncode.fail), self.enum_to_bytes(returncode.fail))
 
     async def remove(self, actcode, data):
         try:
             index = data
             room = Room(room_index=index)
             retcode = await room.remove()
-            return actcode, self.enum_to_bytes(retcode)
+            if retcode == returncode.success:
+                newroom_data = self.enum_to_bytes(returncode.remove)
+                room_bytes = bytes('|{0}'.format(room.room_index), encoding='utf-8')
+                newroom_data += room_bytes
+                return actcode, (self.enum_to_bytes(retcode), newroom_data)
+            return actcode, (self.enum_to_bytes(retcode), self.enum_to_bytes(returncode.fail))
         except ValueError as e:
-            return actcode, self.enum_to_bytes(returncode.fail)
+            return actcode, (self.enum_to_bytes(returncode.fail), self.enum_to_bytes(returncode.fail))
 
     async def remove_all(self, actcode, data):
         try:
