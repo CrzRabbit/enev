@@ -23,11 +23,17 @@ class server(object):
             reqcode, actcode, data = message.get()
             retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
             if reqcode == requestcode.room and (actcode == actioncode.create or actcode == actioncode.update or actcode == actioncode.remove):
-                retrc1, retdata1 = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actioncode.list), '')
-                for pkg in retdata1:
-                    rooms_data = b''
-                    rooms_data += await self.processretdata(retrc1, pkg)
-                    await self.send_all(rooms_data)
+                # retrc1, retdata1 = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actioncode.list), '')
+                # for pkg in retdata1:
+                #     rooms_data = b''
+                #     rooms_data += await self.processretdata(retrc1, pkg)
+                #     await self.send_all(rooms_data)
+                room_data = b''
+                room_data += await self.processretdata(actioncode.list, retdata[1])
+                await self.send_all(room_data)
+                buff += await self.processretdata(retrc, retdata[0])
+            elif actcode != actioncode.list:
+                buff += await self.processretdata(retrc, retdata)
             if reqcode == requestcode.account and actcode == actioncode.login:
                 name, pwd = data.split()
                 user = User(user_name=name, user_pwd=pwd)
@@ -37,7 +43,6 @@ class server(object):
                     buff = await self.processretdata(retrc, pkg)
                     await self.send_current(buff)
                 return None
-            buff += await self.processretdata(retrc, retdata)
         return buff
 
     def save_client(self, client):
