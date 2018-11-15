@@ -23,11 +23,6 @@ class server(object):
             reqcode, actcode, data = message.get()
             retrc, retdata = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actcode), data)
             if reqcode == requestcode.room and (actcode == actioncode.create or actcode == actioncode.update or actcode == actioncode.remove):
-                # retrc1, retdata1 = await controllerdict[requestcode(reqcode)].processrequest(actioncode(actioncode.list), '')
-                # for pkg in retdata1:
-                #     rooms_data = b''
-                #     rooms_data += await self.processretdata(retrc1, pkg)
-                #     await self.send_all(rooms_data)
                 room_data = b''
                 room_data += await self.processretdata(actioncode.list, retdata[1])
                 await self.send_all(room_data)
@@ -65,9 +60,9 @@ class server(object):
     async def send_all(self, data):
         try:
             for client in self._clients:
-                #if client != self._currentclient:
-                client.write(data)
-                await client.drain()
+                if client != self._currentclient:
+                    client.write(data)
+                    await client.drain()
         except BrokenPipeError as e:
             pass
 
