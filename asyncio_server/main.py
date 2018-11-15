@@ -5,7 +5,7 @@ from debug.log import *
 from common.common import *
 
 LOCAL_ADDRESS = '127.0.0.1'
-SERVER_ADDRESS = '172.27.0.15'
+SERVER_ADDRESS = '172.27.0.9'
 PORT = 20000
 BUFFLEN = 2048
 SEPARATOR = b'#'
