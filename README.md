@@ -13,7 +13,7 @@ sudo apt-get install python3-pip
 3. add environmental variable
 vim /etc/profile
 export PYTHONPATH=~/GameServer
-source profile
+source /etc/profile
 
 4. install aoimysql
 sudo apt-get install python-dev python-pip libxml2-dev libxslt1-dev zlib1g-dev libffi-dev libssl-dev
