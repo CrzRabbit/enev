@@ -12,14 +12,14 @@ class actioncode(Enum):
     clear = 3
     login = 4
     logout = 5
-    offline_all = 12
+    offline_all = 6
 
-    create = 6
-    list = 7
-    update = 8
-    join = 9
-    remove = 10
-    clear_empty = 11
+    create = 7
+    list = 8
+    update = 9
+    join = 10
+    remove = 11
+    clear_empty = 12
     remove_all = 13
 
 class returncode(Enum):
