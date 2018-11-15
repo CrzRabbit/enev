@@ -3,7 +3,7 @@
 1. clone code
 cd ~
 sudo mkdir GameServer
-sudo git clone https://github.com/CrzRabbit/enev.git /GameServer
+sudo git clone https://github.com/CrzRabbit/enev.git ~/GameServer
 sudo git checkout aiosync_server
 
 2. install python3.5 pip3
