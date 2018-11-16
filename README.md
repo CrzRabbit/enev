@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 #Note: This program should run with python3.5
 
