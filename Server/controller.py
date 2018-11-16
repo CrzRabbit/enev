@@ -199,7 +199,7 @@ class roomcontroller(basecontroller):
 
     async def remove(self, actcode, data):
         try:
-            index = data
+            index = int(data)
             room = Room(room_index=index)
             retcode = await room.remove()
             if retcode == returncode.success:
