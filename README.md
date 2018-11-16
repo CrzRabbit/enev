@@ -1,5 +1,8 @@
-# enev
-# This is the deployment manual.
+
+#Note: This program should run with python3.5
+
+#This is the deployment manual.
+
 1. clone code
 cd ~
 sudo mkdir GameServer
