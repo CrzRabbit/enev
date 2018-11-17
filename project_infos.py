@@ -14,7 +14,7 @@ def get_lines(current_path):
         temp_path = current_path + '/' + members
         if re.match(r'^\./\.', temp_path):
             continue
-        if os.path.isfile(temp_path):
+        if os.path.isfile(temp_path) and re.search(r'\.py$', temp_path):
             try:
                 file = open(temp_path)
                 lines = file.readlines()
@@ -24,13 +24,13 @@ def get_lines(current_path):
                 file_count += 1
             except UnicodeDecodeError as e:
                 pass
-        else:
+        elif os.path.isdir(temp_path):
             get_lines(temp_path)
 
 if __name__ == '__main__':
     for members in os.listdir(current_path):
         temp_path = current_path + members
-        if os.path.isfile(temp_path):
+        if os.path.isfile(temp_path) and re.search(r'\.py$', temp_path):
             try:
                 file = open(temp_path)
                 lines = file.readlines()
@@ -40,7 +40,7 @@ if __name__ == '__main__':
                 file_count += 1
             except UnicodeDecodeError as e:
                 pass
-        else:
+        elif os.path.isdir(temp_path):
             get_lines(temp_path)
     print('')
     print('total file count: {}'.format(file_count))
