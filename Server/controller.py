@@ -143,12 +143,15 @@ class roomcontroller(basecontroller):
             return actcode, (self.enum_to_bytes(returncode.fail), self.enum_to_bytes(returncode.fail))
 
     async def list(self, actcode, data):
+        rooms_data_pkgs = list()
         try:
             retcode, rooms = await Room.find_all()
-            rooms_data_pkgs = list()
             rooms_data = b''
             room_count = 0
             self._empty_count = 0
+            if rooms.__len__() == 0:
+                rooms_data_pkgs.append(self.enum_to_bytes(retcode))
+                return actcode, rooms_data_pkgs
             for room in rooms:
                 #当空房间超过100,清除所有空房间
                 if room.room_cur_count == 0:
@@ -173,11 +176,19 @@ class roomcontroller(basecontroller):
             rooms_data_pkgs.append(rooms_data)
             return actcode, rooms_data_pkgs
         except ValueError as e:
-            return actcode, self.enum_to_bytes(returncode.fail)
+            rooms_data_pkgs.append(self.enum_to_bytes(returncode.fail))
+            return actcode, rooms_data_pkgs
 
     async def update(self, actcode, data):
         try:
             index, name, owner, pwd, ip, port, scene, state, level, cur_count, max_count = data.split()
+            index = int(index.decode())
+            name = name.decode()
+            owner = owner.decode()
+            pwd = pwd.decode()
+            ip = ip.decode()
+            port = port.decode()
+            scene = scene.decode()
             if pwd == b'@':
                 pwd = ''
             room = Room(room_index=index, room_name=name, room_owner=owner, room_pwd=pwd, room_ip=ip, room_port=port,
@@ -185,6 +196,10 @@ class roomcontroller(basecontroller):
                         , room_cur_count=int(cur_count), room_max_count=int(max_count))
             retcode = await room.update()
             if retcode == returncode.success:
+                if room.room_state:
+                    room.room_state = 0
+                else:
+                    room.room_state = 1
                 newroom_data = self.enum_to_bytes(returncode.update)
                 room_bytes = bytes('|{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}'
                                    .format(room.room_index, room.room_name, room.room_owner, room.room_pwd,

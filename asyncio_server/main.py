@@ -39,6 +39,10 @@ async def async_server(reader, writer):
             logi(logcf.base, 'ConnectionResetError')
             await server_processor.remove_client(writer)
             return None
+        except ConnectionAbortedError as e:
+            logi(logcf.base, 'ConnectionAbortedError')
+            await server_processor.remove_client(writer)
+            return None
 
 async def send_to_client(writer, data):
     if data:
@@ -64,7 +68,7 @@ if __name__ == '__main__':
     loop.run_until_complete(init(accountctrl, roomctrl, loop))
 
     #init server corotine
-    server_coro = asyncio.start_server(async_server, SERVER_ADDRESS, PORT, loop=loop)
+    server_coro = asyncio.start_server(async_server, LOCAL_ADDRESS, PORT, loop=loop)
 
     server = loop.run_until_complete(server_coro)
     host = server.sockets[0].getsockname()
