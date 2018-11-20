@@ -223,6 +223,7 @@ class Model(dict, metaclass=ModelMetaClass):
             logw(logcf.database, 'Remove failed, {0} rows affected.'.format(rows))
             return returncode.fail
         elif rows == 1:
+            logi(logcf.database, 'Remove success.')
             return returncode.success
         return returncode.fail
 
