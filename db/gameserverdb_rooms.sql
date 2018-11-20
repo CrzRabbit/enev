@@ -32,7 +32,7 @@ CREATE TABLE `rooms` (
   `room_ip` varchar(20) NOT NULL,
   `room_port` bigint(20) NOT NULL,
   `room_scene` varchar(40) NOT NULL,
-  `room_state` double NOT NULL,
+  `room_state` int(11) NOT NULL,
   `room_level` bigint(20) NOT NULL DEFAULT '0',
   `room_cur_count` int(11) NOT NULL DEFAULT '0',
   `room_max_count` int(11) NOT NULL,
