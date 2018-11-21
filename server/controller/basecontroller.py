@@ -1,4 +1,3 @@
-from server.tables import *
 
 controllerdict = dict()
 usercount = 0

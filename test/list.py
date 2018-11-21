@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
     # for test
     #print(time.localtime(time.time()))
-    client = Client(local_addr, port)
+    client = client(local_addr, port)
     for i in range(0,test_amount):
         client.registure('wangjiangchuan', 'wang0010')
         client.login('wangjiangchuan', 'wang0010')

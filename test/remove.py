@@ -1,6 +1,5 @@
 #!/usr/bin/env python3.5
 from client.client import *
-import time
 
 local_addr = '127.0.0.1'
 port = 20000
@@ -12,7 +11,7 @@ if __name__ == '__main__':
 
     # for test
     #print(time.localtime(time.time()))
-    client = Client(server_addr, port)
+    client = client(local_addr, port)
     for i in range(0,test_amount):
         # client.registure('wangjiangchuan', 'wang0010')
         # client.login('wangjiangchuan', 'wang0010')

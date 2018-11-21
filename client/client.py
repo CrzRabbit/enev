@@ -5,7 +5,7 @@ from common.message import *
 recvdatalen = 8096
 SEPARATOR = '#'
 
-class Client(object):
+class client(object):
     def __init__(self, addr, port):
         self._addr = addr
         self._port = port

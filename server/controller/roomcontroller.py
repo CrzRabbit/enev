@@ -1,4 +1,5 @@
 from server.controller.basecontroller import *
+from server.tables import *
 from common.common import *
 
 class roomcontroller(basecontroller):
