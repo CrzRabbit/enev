@@ -1,4 +1,4 @@
-from Server.ORM import *
+from server.ORM import *
 import time, uuid
 
 def next_id():

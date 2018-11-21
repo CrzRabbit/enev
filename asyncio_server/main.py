@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.5
 import asyncio
-from Server import *
+from server.controller import *
+from server import *
 from debug.log import *
 from common.common import *
 
@@ -63,8 +64,8 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
 
     #init controller and create pool
-    accountctrl =  controller.accountcontroller()
-    roomctrl = controller.roomcontroller()
+    accountctrl =  accountcontroller.accountcontroller()
+    roomctrl = roomcontroller.roomcontroller()
     loop.run_until_complete(init(accountctrl, roomctrl, loop))
 
     #init server corotine
@@ -72,11 +73,11 @@ if __name__ == '__main__':
 
     server = loop.run_until_complete(server_coro)
     host = server.sockets[0].getsockname()
-    logi(logcf.base, 'Server running on {}...'.format(host))
+    logi(logcf.base, 'server running on {}...'.format(host))
     try:
         loop.run_forever()
     except KeyboardInterrupt:
-        logi(logcf.base, 'Server closed.')
+        logi(logcf.base, 'server closed.')
         server.close()
         loop.run_until_complete(server.wait_closed())
     finally:

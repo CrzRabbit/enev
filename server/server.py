@@ -1,4 +1,4 @@
-from Server.controller import *
+from server.controller.basecontroller import *
 from common.message import *
 
 class server(object):
