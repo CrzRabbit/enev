@@ -26,7 +26,7 @@ class accountcontroller(basecontroller):
         except ValueError as e:
             return actcode, self.enum_to_bytes(returncode.fail)
 
-    #infotype： 0(user_pwd) 1(user_level) 2(usr_cur_exp)
+    #infotype： 0(user_pwd) 1(user_level) 2(user_cur_exp)
     async def updateinfo(self, actcode, data):
         try:
             index_bytes, infotype_bytes, info = data.split()
@@ -41,7 +41,7 @@ class accountcontroller(basecontroller):
             elif infotype == 1:
                 user.user_level = int(info)
             elif infotype == 2:
-                user.usr_cur_exp = int(info)
+                user.user_cur_exp = int(info)
             else:
                 return actcode, self.enum_to_bytes(returncode.fail)
             retcode = await user.update()
