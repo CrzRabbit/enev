@@ -2,6 +2,7 @@
 import asyncio
 from server.controller import *
 from server import *
+from server.tables import *
 from debug.log import *
 from common.common import *
 
@@ -57,6 +58,10 @@ async def init(accountctrl, roomctrl, loop):
     await accountctrl.offline_all(actioncode.offline_all, '')
     # clear all rooms
     await roomctrl.remove_all(actioncode.remove_all, '')
+    # create table 'users'
+    await User.create()
+    # create table 'rooms'
+    await Room.create()
 
 if __name__ == '__main__':
 
@@ -69,7 +74,7 @@ if __name__ == '__main__':
     loop.run_until_complete(init(accountctrl, roomctrl, loop))
 
     #init server corotine
-    server_coro = asyncio.start_server(async_server, SERVER_ADDRESS, PORT, loop=loop)
+    server_coro = asyncio.start_server(async_server, LOCAL_ADDRESS, PORT, loop=loop)
 
     server = loop.run_until_complete(server_coro)
     host = server.sockets[0].getsockname()

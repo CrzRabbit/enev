@@ -215,6 +215,12 @@ class Model(dict, metaclass=ModelMetaClass):
             return returncode.fail, None
         return returncode.success, cls(**rs._result[0])
 
+    @classmethod
+    async def create(cls):
+        args = list()
+        ret = await execute(cls.__create__, args)
+        return returncode.success
+
     async def remove(self):
         args = list()
         args.append(self.get_value(self.__primary_key__))
